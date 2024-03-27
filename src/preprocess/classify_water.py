@@ -36,7 +36,7 @@ PATH_TYPE = f"LIGAND_POCKET_VOXEL_NUM_{LIGAND_VOXEL_NUM}" if LIGAND_POCKET_TYPE 
 def main():
     pdb_names = get_all_pdb_names()
     for pdb_name in pdb_names:
-        pdb_name = '4lkk'
+        pdb_name = '4b74'
         print(pdb_name)
 
         water_path = get_water_path(pdb_name)

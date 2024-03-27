@@ -30,13 +30,23 @@ class WaterClassifyingRuleSurface(WaterClassifyingRule):
         if water_coordinates_inside_ligand_pocket.size == 0:
             raise ValueError("No water molecules inside ligand pocket")
 
-        displaceable_water_coordinates = np.array([]).reshape(0, 3)  
+        temp_displaceable_water_coords = []
         for atomic_symbol, coords in ligand_atomic_symbol_coords_dict.items():
             threshold = self.RADIUSES[atomic_symbol] + self.RADIUSES['O']
             points = extract_points_within_threshold(coords, water_coordinates_inside_ligand_pocket, threshold)
             if points.size > 0:
-                displaceable_water_coordinates = np.vstack((displaceable_water_coordinates, points))
-        displaceable_water_coordinates = np.unique(displaceable_water_coordinates, axis=0)
-        non_displaceable_water_coordinates = np.array(list(set(map(tuple, water_coordinates_inside_ligand_pocket)) - set(map(tuple, displaceable_water_coordinates))))
+                temp_displaceable_water_coords.append(points)
+
+        if temp_displaceable_water_coords:
+            displaceable_water_coordinates = np.vstack(temp_displaceable_water_coords)
+            displaceable_water_coordinates = np.unique(displaceable_water_coordinates, axis=0)
+        else:
+            displaceable_water_coordinates = np.empty((0, 3))
+
+        mask = np.ones(len(water_coordinates_inside_ligand_pocket), dtype=bool)
+        for displaceable_water_coord in displaceable_water_coordinates:
+            mask = mask & ~np.all(water_coordinates_inside_ligand_pocket == displaceable_water_coord, axis=1)
+        non_displaceable_water_coordinates = water_coordinates_inside_ligand_pocket[mask]
+        # non_displaceable_water_coordinates = np.array(list(set(map(tuple, water_coordinates_inside_ligand_pocket)) - set(map(tuple, displaceable_water_coordinates))))
 
         return displaceable_water_coordinates, non_displaceable_water_coordinates
