@@ -13,13 +13,11 @@ class WaterClassifier:
         self.grid_dims = grid_dims
         self.grid_origin = grid_origin
         self.ligand_pocket_path = ligand_pocket_path
-        self.voxelized_ligand = None
         self.ligand_pocket = None
         self.water_index_to_coordinate = None
         self.water_coordinate_to_id = None
 
     def load_ligand(self) -> None:
-        self.voxelized_ligand = get_voxelized_ligand(self.pdb_name)
         self.ligand_pocket = np.load(self.ligand_pocket_path)
     
     # def define_ligand_pocket(self, ligand_pocket_definer):
@@ -46,9 +44,6 @@ class WaterClassifier:
         input_pdb_path = get_water_path(self.pdb_name)
         filter_atoms_and_create_new_pdb(input_pdb_path=input_pdb_path, output_pdb_path=output_path_displaceable, target_atom_ids=displaceable_water_ids)
         filter_atoms_and_create_new_pdb(input_pdb_path=input_pdb_path, output_pdb_path=output_path_non_displaceable, target_atom_ids=non_displaceable_water_ids)
-    
-    def _is_ligand_present(self, voxelized_ligand: np.ndarray, threshold=LIGAND_PRESENT_THRESHOLD) -> np.ndarray:
-        return np.any(voxelized_ligand > threshold, axis=0)
     
     def _convert_coordinates_to_water_ids(self, water_coordinates: np.ndarray, water_coordinate_to_id: dict) -> list:
         target_water_ids = []

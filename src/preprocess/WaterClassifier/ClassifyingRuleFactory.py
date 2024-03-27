@@ -1,11 +1,11 @@
 from WaterClassifier.WaterClassifyingRuleSurface import WaterClassifyingRuleSurface
-# from WaterClassifyingRuleCenter import WaterClassifyingRuleCenter
+from WaterClassifier.WaterClassifyingRuleCenter import WaterClassifyingRuleCenter
 
 class ClassifyingRuleFactory:
     def __init__(self):
         self._rules = {
             "WaterClassifyingRuleSurface": WaterClassifyingRuleSurface,
-            # "WaterClassifyingRuleCenter": WaterClassifyingRuleCenter,
+            "WaterClassifyingRuleCenter": WaterClassifyingRuleCenter,
         }
 
     def get_rule(self, rule_name, *args):

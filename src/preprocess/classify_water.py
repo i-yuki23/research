@@ -26,11 +26,12 @@ from lib.pdb import get_coordinates_from_pdb, get_all_pdb_names
 from lib.path import get_water_path, get_original_ligand_pocket_path, get_ghecom_ligand_pocket_path
 from WaterClassifier.WaterClassifier import WaterClassifier
 from WaterClassifier.WaterClassifyingRuleSurface import WaterClassifyingRuleSurface
+from WaterClassifier.WaterClassifyingRuleCenter import WaterClassifyingRuleCenter
 from WaterClassifier.ClassifyingRuleFactory import ClassifyingRuleFactory
 
 LIGAND_VOXEL_NUM = 6
 LIGAND_POCKET_TYPE = "ghecom"
-CLASSIFYING_RULE = "WaterClassifyingRuleSurface"
+CLASSIFYING_RULE = "WaterClassifyingRuleCenter"
 PATH_TYPE = f"LIGAND_POCKET_VOXEL_NUM_{LIGAND_VOXEL_NUM}" if LIGAND_POCKET_TYPE == "original" else "ghecom"
 
 def main():
@@ -59,6 +60,7 @@ def main():
             classifying_rule_factory = ClassifyingRuleFactory()
             water_classifying_rule = classifying_rule_factory.get_rule(CLASSIFYING_RULE, pdb_name, grid_dims, grid_origin)
             water_classifier.load_ligand()
+            # water_classifier.define_ligand_pocket(ligand_pocket_definer)
             water_classifier.create_convert_dict(water_coordinates)
             displaceable_water_ids, non_displaceable_water_ids = water_classifier.get_classified_water_ids(water_coordinates, water_classifying_rule)
             water_classifier.save_classified_water_as_pdb(displaceable_water_ids=displaceable_water_ids,

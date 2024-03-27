@@ -5,9 +5,12 @@ from typing import Tuple
 class WaterClassifierWaterCenter(WaterClassifier):
     LIGAND_PRESENT_THRESHOLD = 1-np.exp(-1)
 
-    def __init__(self, pdb_name, grid_dims, grid_origin, ligand_pocket_path):
-        super().__init__(pdb_name, grid_dims, grid_origin, ligand_pocket_path)
+    def __init__(self, pdb_name, grid_dims, grid_origin):
+        super().__init__(pdb_name, grid_dims, grid_origin)
     
+    def _is_ligand_present(self, voxelized_ligand: np.ndarray, threshold=LIGAND_PRESENT_THRESHOLD) -> np.ndarray:
+        return np.any(voxelized_ligand > threshold, axis=0)
+
     def _get_displaceable_and_non_displaceable_water_coordinates(self, water_coordinates: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
         voxelized_water_center = self._get_voxelized_water_center(water_coordinates, self.grid_dims, self.grid_origin)
 
