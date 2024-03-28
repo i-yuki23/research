@@ -33,16 +33,18 @@ DATA_DIR = "/home/ito/research/data/labeled_water/"
 LIGAND_VOXEL_NUM = 6
 CLASSIFYING_RULE = "WaterClassifyingRuleCenter"
 LIGAND_POCKET_DEFINER = "LigandPocketDefinerGhecom"
-PATH_TYPE = f"{CLASSIFYING_RULE}/{LIGAND_POCKET_DEFINER}/ligand_pocket_voxel_num_{LIGAND_VOXEL_NUM}/"
+# PATH_TYPE = f"{CLASSIFYING_RULE}/{LIGAND_POCKET_DEFINER}/ligand_pocket_voxel_num_{LIGAND_VOXEL_NUM}/"
 
-def classify_water():
+def classify_water(ligand_voxel_num, classifying_rule, ligand_pocket_definer):
+    
+    PATH_TYPE = f"{classifying_rule}/{ligand_pocket_definer}/ligand_pocket_voxel_num_{ligand_voxel_num}/"
     pdb_names = get_all_pdb_names()
-    for pdb_name in pdb_names:
+    for pdb_name in pdb_names[:1]:
         # pdb_name = '4b74'
         print(pdb_name)
 
         paths = {
-                "output_displaceable": os.path.join(DATA_DIR, PATH_TYPE, "displaceable/", pdb_name,  f"pred_O_placed_{pdb_name}_3.0_.pdb"),
+                "output_displaceable": os.path.join(DATA_DIR, PATH_TYPE, "displaceable/", pdb_name,  f"pred_O_placed_{pdb_name}_3.0.pdb"),
                 "output_non_displaceable": os.path.join(DATA_DIR, PATH_TYPE, "non_displaceable/", pdb_name,  f"pred_O_placed_{pdb_name}_3.0.pdb"),
             }
         for path in paths.values():
@@ -74,6 +76,15 @@ def classify_water():
         except Exception as e:
             print(f"Error: {e}\n{traceback.format_exc()}")
             continue
-        exit()
+        # exit()
+
 if __name__ == '__main__':
-    classify_water()
+    ligand_voxel_nums = [8, 10]
+    classifying_rules = ["WaterClassifyingRuleCenter", "WaterClassifyingRuleSurface"]
+    ligand_pocket_definers = ["LigandPocketDefinerGhecom", "LigandPocketDefinerOriginal"]
+
+    for ligand_voxel_num in ligand_voxel_nums:
+        for classifying_rule in classifying_rules:
+            for ligand_pocket_definer in ligand_pocket_definers:
+                print(f"ligand_voxel_num: {ligand_voxel_num}, classifying_rule: {classifying_rule}, ligand_pocket_definer: {ligand_pocket_definer}")
+                classify_water(ligand_voxel_num, classifying_rule, ligand_pocket_definer)
