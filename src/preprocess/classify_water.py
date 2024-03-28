@@ -25,33 +25,38 @@ import traceback
 
 from lib.voxel import read_xyzv
 from lib.pdb import get_coordinates_from_pdb, get_all_pdb_names
-from lib.path import get_water_path, get_original_ligand_pocket_path, get_ghecom_ligand_pocket_path
+from lib.path import get_water_path
 from WaterClassifier.WaterClassifier import WaterClassifier
 from WaterClassifier.ClassifyingRuleFactory import ClassifyingRuleFactory
 from WaterClassifier.LigandPocketDefinerFactory import LigandPocketDefinerFactory
-
+DATA_DIR = "/home/ito/research/data/labeled_water/"
 LIGAND_VOXEL_NUM = 6
-LIGAND_POCKET_TYPE = "ghecom"
 CLASSIFYING_RULE = "WaterClassifyingRuleCenter"
 LIGAND_POCKET_DEFINER = "LigandPocketDefinerGhecom"
-PATH_TYPE = f"LIGAND_POCKET_VOXEL_NUM_{LIGAND_VOXEL_NUM}" if LIGAND_POCKET_TYPE == "original" else "ghecom"
-# PATH_TYPE = f"{LIGAND_POCKET_DEFINER}/ligand_pocket_voxel_num_{LIGAND_VOXEL_NUM}/{CLASSIFYING_RULE}/"
+PATH_TYPE = f"{CLASSIFYING_RULE}/{LIGAND_POCKET_DEFINER}/ligand_pocket_voxel_num_{LIGAND_VOXEL_NUM}/"
 
-def main():
+def classify_water():
     pdb_names = get_all_pdb_names()
     for pdb_name in pdb_names:
-        pdb_name = '4b74'
+        # pdb_name = '4b74'
         print(pdb_name)
+
+        paths = {
+                "output_displaceable": os.path.join(DATA_DIR, PATH_TYPE, "displaceable/", pdb_name,  f"pred_O_placed_{pdb_name}_3.0_.pdb"),
+                "output_non_displaceable": os.path.join(DATA_DIR, PATH_TYPE, "non_displaceable/", pdb_name,  f"pred_O_placed_{pdb_name}_3.0.pdb"),
+            }
+        for path in paths.values():
+            # os.path.dirname(path) を使ってファイルのあるディレクトリのパスを取得
+            directory = os.path.dirname(path)
+            
+            # ディレクトリが存在するか確認
+            if not os.path.exists(directory):
+                # ディレクトリが存在しない場合、ディレクトリを作成（親ディレクトリも含めて）
+                os.makedirs(directory, exist_ok=True)  #
 
         water_path = get_water_path(pdb_name)
         water_coordinates = get_coordinates_from_pdb(water_path)
         _, grid_dims, grid_origin = read_xyzv(pdb_name)
-
-        paths = {
-                "output_displaceable": os.path.join(f"/home/ito/research/data/{PATH_TYPE}/labeled_water/displaceable/", pdb_name,  f"pred_O_placed_{pdb_name}_3.0_test.pdb"),
-                "output_non_displaceable": os.path.join(f"/home/ito/research/data/{PATH_TYPE}/labeled_water/non_displaceable/", pdb_name,  f"pred_O_placed_{pdb_name}_3.0_test.pdb"),
-            }
-        
 
         try:
             water_classifier = WaterClassifier(pdb_name, grid_dims, grid_origin)
@@ -71,4 +76,4 @@ def main():
             continue
         exit()
 if __name__ == '__main__':
-    main()
+    classify_water()

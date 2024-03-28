@@ -41,7 +41,6 @@ def get_ligand_pocket_form_ghecom(pdb_name, grid_dims, grid_origin, voxel_num): 
         return  
     ligand_pocket_grids = [item for sublist in ligand_pocket_grids_list.values() for item in sublist]  # listをまとめる（全グリットから抽出するとき）
     # ligand_pocket_grids = get_dominant_cluster(ligand_pocket_grids_list, ghecom_clusters)
-    # _, grid_dims, grid_origin = read_xyzv(pdb_name)
     ligand_pocket_voxel_indices = coordinate_to_voxel_index(ligand_pocket_grids, grid_origin)
     ligand_pocket_voxel = extract_surroundings_voxel(ligand_pocket_voxel_indices, grid_dims, voxel_num=SURROUNDING_VOXEL_NUM)
     save_path = f'/home/ito/research/data/ghecom/ligand_pocket/{pdb_name}/ligand_pocket_from_grid.npy'
