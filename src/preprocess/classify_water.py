@@ -28,10 +28,12 @@ from WaterClassifier.WaterClassifier import WaterClassifier
 from WaterClassifier.WaterClassifyingRuleSurface import WaterClassifyingRuleSurface
 from WaterClassifier.WaterClassifyingRuleCenter import WaterClassifyingRuleCenter
 from WaterClassifier.ClassifyingRuleFactory import ClassifyingRuleFactory
+from WaterClassifier.LigandPocketDefinerFactory import LigandPocketDefinerFactory
 
 LIGAND_VOXEL_NUM = 6
 LIGAND_POCKET_TYPE = "ghecom"
 CLASSIFYING_RULE = "WaterClassifyingRuleCenter"
+LIGAND_POCKET_DEFINER = "LigandPocketDefinerOriginal"
 PATH_TYPE = f"LIGAND_POCKET_VOXEL_NUM_{LIGAND_VOXEL_NUM}" if LIGAND_POCKET_TYPE == "original" else "ghecom"
 
 def main():
@@ -49,18 +51,13 @@ def main():
                 "output_non_displaceable": os.path.join(f"/home/ito/research/data/{PATH_TYPE}/labeled_water/non_displaceable/", pdb_name,  f"pred_O_placed_{pdb_name}_3.0_test.pdb"),
             }
 
-        if LIGAND_POCKET_TYPE == "original":
-            ligand_pocket_path = get_original_ligand_pocket_path(pdb_name, LIGAND_VOXEL_NUM)
-
-        elif LIGAND_POCKET_TYPE == "ghecom":
-            ligand_pocket_path = get_ghecom_ligand_pocket_path(pdb_name)
-
         try:
-            water_classifier = WaterClassifier(pdb_name, grid_dims, grid_origin, ligand_pocket_path)
+            water_classifier = WaterClassifier(pdb_name, grid_dims, grid_origin)
             classifying_rule_factory = ClassifyingRuleFactory()
+            ligand_pocket_definer_factory = LigandPocketDefinerFactory()
+            ligand_pocket_definer = ligand_pocket_definer_factory.get_ligand_pocket_definer(LIGAND_POCKET_DEFINER, pdb_name, grid_dims, grid_origin, LIGAND_VOXEL_NUM)
             water_classifying_rule = classifying_rule_factory.get_rule(CLASSIFYING_RULE, pdb_name, grid_dims, grid_origin)
-            water_classifier.load_ligand()
-            # water_classifier.define_ligand_pocket(ligand_pocket_definer)
+            water_classifier.define_ligand_pocket(ligand_pocket_definer)
             water_classifier.create_convert_dict(water_coordinates)
             displaceable_water_ids, non_displaceable_water_ids = water_classifier.get_classified_water_ids(water_coordinates, water_classifying_rule)
             water_classifier.save_classified_water_as_pdb(displaceable_water_ids=displaceable_water_ids,

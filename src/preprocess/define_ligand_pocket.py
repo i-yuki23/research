@@ -10,14 +10,13 @@ from lib.voxel import read_xyzv, coordinate_to_voxel_index
 from lib.voxel import extract_surroundings_voxel
 
 # Constants for readability
-VOXEL_NUM = 4
 PROTEIN_PRESENT_THRESHOLD = 1-np.exp(-1)
 
 def is_protein_present(protein_voxel, threshold=PROTEIN_PRESENT_THRESHOLD):
     return np.any(protein_voxel > threshold, axis=0)
 
 
-def get_ligand_pocket(protein_coordinates, ligand_coordinates, protein_atomic_symbols, grid_dims, grid_origin, voxel_num=VOXEL_NUM):
+def get_ligand_pocket(protein_coordinates, ligand_coordinates, protein_atomic_symbols, grid_dims, grid_origin, voxel_num):
     """
     Identifies the ligand pocket in a protein structure.
     

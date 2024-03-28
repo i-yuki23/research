@@ -8,22 +8,22 @@ from typing import Tuple
 class WaterClassifier:
     LIGAND_PRESENT_THRESHOLD = 1-np.exp(-1)
 
-    def __init__(self, pdb_name, grid_dims, grid_origin, ligand_pocket_path):
+    def __init__(self, pdb_name, grid_dims, grid_origin):
         self.pdb_name = pdb_name
         self.grid_dims = grid_dims
         self.grid_origin = grid_origin
-        self.ligand_pocket_path = ligand_pocket_path
+        # self.ligand_pocket_path = ligand_pocket_path
         self.ligand_pocket = None
         self.water_index_to_coordinate = None
         self.water_coordinate_to_id = None
 
-    def load_ligand(self) -> None:
-        self.ligand_pocket = np.load(self.ligand_pocket_path)
+    # def load_ligand(self) -> None:
+    #     self.ligand_pocket = np.load(self.ligand_pocket_path)
     
-    # def define_ligand_pocket(self, ligand_pocket_definer):
-    #     self.ligand_pocket = ligand_pocket_definer.define_ligand_pocket()
-    #     if not np.any(self.ligand_pocket):
-    #         raise ValueError("Ligand pocket is empty")
+    def define_ligand_pocket(self, ligand_pocket_definer):
+        self.ligand_pocket = ligand_pocket_definer.define_ligand_pocket()
+        if not np.any(self.ligand_pocket):
+            raise ValueError("Ligand pocket is empty")
 
     def create_convert_dict(self, water_coordinates: np.ndarray) -> None:
         water_voxel_index = coordinate_to_voxel_index(water_coordinates, self.grid_origin)
