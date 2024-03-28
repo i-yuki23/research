@@ -11,7 +11,6 @@ from lib.voxel import extract_surroundings_voxel, read_xyzv, coordinate_to_voxel
 # 判定条件
 # リガンド原子とクラスターの座標との距離がある閾値以下のgridをピック
 SURROUNDING_VOXEL_NUM = 1
-THRESHOLD = 3.0  # リガンドとポケットの点との距離の閾値
 
 
 def extract_ligand_pocket_grids(ligand_coords ,ghecom_clusters, threshold):
@@ -31,9 +30,8 @@ def get_dominant_cluster(extracted_points_list, ghecom_clusters):
 
     return ligand_pocket_cluster_coords
 
-
-def get_ligand_pocket_form_ghecom(pdb_name, threshold):
-
+def get_ligand_pocket_form_ghecom(pdb_name, voxel_num): # originalがvoxel num で定義しているので合わせています
+    threshold = voxel_num / 2  
     ligand_path = get_ligand_path(pdb_name)
     ligand_coords = get_coordinates_from_pdb(ligand_path) # リガンドの原子座標リスト（実際の座標に置き換える）
     ghecom_clusters = get_clusters_from_ghecom(pdb_name)  # ポケット領域を定義する点の座標リスト（実際の座標に置き換える）
@@ -47,12 +45,13 @@ def get_ligand_pocket_form_ghecom(pdb_name, threshold):
     ligand_pocket_voxel_indices = coordinate_to_voxel_index(ligand_pocket_grids, grid_origin)
     ligand_pocket_voxel = extract_surroundings_voxel(ligand_pocket_voxel_indices, grid_dims, voxel_num=SURROUNDING_VOXEL_NUM)
     save_path = f'/home/ito/research/data/ghecom/ligand_pocket/{pdb_name}/ligand_pocket_from_grid.npy'
-    np.save(file=save_path, arr=ligand_pocket_voxel)
+    # np.save(file=save_path, arr=ligand_pocket_voxel)
+    return ligand_pocket_voxel
 
 if __name__ == "__main__":
     pdb_names = get_all_pdb_names()
     for pdb_name in pdb_names:
-        # pdb_name = '4b74'
+        pdb_name = '4b74'
         get_ligand_pocket_form_ghecom(pdb_name)
 
         # exit()

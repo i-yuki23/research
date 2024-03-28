@@ -1,14 +1,14 @@
 from define_ligand_pocket import get_ligand_pocket
 from lib.pdb import get_coordinates_from_pdb, get_atomic_symbols_from_pdb
 from lib.path import get_ligand_path, get_protein_path
+from WaterClassifier.LigandPocketDefiner import LigandPocketDefiner
 
-class LigandPocketDefinerOriginal:
+class LigandPocketDefinerOriginal(LigandPocketDefiner):
 
     def __init__(self, pdb_name, grid_dims, grid_origin, voxel_num):
-        self.pdb_name = pdb_name
+        super().__init__(pdb_name, voxel_num)
         self.grid_dims = grid_dims
         self.grid_origin = grid_origin
-        self.voxel_num = voxel_num
         self.protein_coordinates = None
         self.protein_atomic_symbols = None
         self.ligand_coordinates = None
