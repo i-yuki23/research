@@ -57,7 +57,7 @@ def main():
             water_classifier = WaterClassifier(pdb_name, grid_dims, grid_origin)
             classifying_rule_factory = ClassifyingRuleFactory()
             ligand_pocket_definer_factory = LigandPocketDefinerFactory()
-            ligand_pocket_definer = ligand_pocket_definer_factory.get_ligand_pocket_definer(LIGAND_POCKET_DEFINER, pdb_name, LIGAND_VOXEL_NUM)
+            ligand_pocket_definer = ligand_pocket_definer_factory.get_ligand_pocket_definer(LIGAND_POCKET_DEFINER, pdb_name, grid_dims, grid_origin, LIGAND_VOXEL_NUM)
             water_classifying_rule = classifying_rule_factory.get_rule(CLASSIFYING_RULE, pdb_name, grid_dims, grid_origin)
             water_classifier.define_ligand_pocket(ligand_pocket_definer)
             water_classifier.create_convert_dict(water_coordinates)

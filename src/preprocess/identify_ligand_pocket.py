@@ -30,7 +30,7 @@ def get_dominant_cluster(extracted_points_list, ghecom_clusters):
 
     return ligand_pocket_cluster_coords
 
-def get_ligand_pocket_form_ghecom(pdb_name, voxel_num): # originalがvoxel num で定義しているので合わせています
+def get_ligand_pocket_form_ghecom(pdb_name, grid_dims, grid_origin, voxel_num): # originalがvoxel num で定義しているので合わせています
     threshold = voxel_num / 2  
     ligand_path = get_ligand_path(pdb_name)
     ligand_coords = get_coordinates_from_pdb(ligand_path) # リガンドの原子座標リスト（実際の座標に置き換える）
@@ -41,7 +41,7 @@ def get_ligand_pocket_form_ghecom(pdb_name, voxel_num): # originalがvoxel num �
         return  
     ligand_pocket_grids = [item for sublist in ligand_pocket_grids_list.values() for item in sublist]  # listをまとめる（全グリットから抽出するとき）
     # ligand_pocket_grids = get_dominant_cluster(ligand_pocket_grids_list, ghecom_clusters)
-    _, grid_dims, grid_origin = read_xyzv(pdb_name)
+    # _, grid_dims, grid_origin = read_xyzv(pdb_name)
     ligand_pocket_voxel_indices = coordinate_to_voxel_index(ligand_pocket_grids, grid_origin)
     ligand_pocket_voxel = extract_surroundings_voxel(ligand_pocket_voxel_indices, grid_dims, voxel_num=SURROUNDING_VOXEL_NUM)
     save_path = f'/home/ito/research/data/ghecom/ligand_pocket/{pdb_name}/ligand_pocket_from_grid.npy'

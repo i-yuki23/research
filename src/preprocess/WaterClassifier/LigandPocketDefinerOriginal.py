@@ -6,9 +6,7 @@ from WaterClassifier.LigandPocketDefiner import LigandPocketDefiner
 class LigandPocketDefinerOriginal(LigandPocketDefiner):
 
     def __init__(self, pdb_name, grid_dims, grid_origin, voxel_num):
-        super().__init__(pdb_name, voxel_num)
-        self.grid_dims = grid_dims
-        self.grid_origin = grid_origin
+        super().__init__(pdb_name, grid_dims, grid_origin, voxel_num)
         self.protein_coordinates = None
         self.protein_atomic_symbols = None
         self.ligand_coordinates = None
