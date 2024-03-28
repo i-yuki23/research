@@ -6,9 +6,17 @@ from modules.get_atomic_symbol_coords_dict import get_atomic_symbol_coords_dict_
 from lib.path import get_ligand_path
 
 class WaterClassifyingRule:
-    def __init__(self, rule, pdb_name):
-        self.rule = rule
+    def __init__(self, pdb_name, grid_dims, grid_origin):
         self.pdb_name = pdb_name
+        self.grid_dims = grid_dims
+        self.grid_origin = grid_origin
+        self.water_index_to_coordinate = None
+        self.water_coordinate_to_id = None
+
+    def _create_convert_dict(self, water_coordinates: np.ndarray) -> None:
+        water_voxel_index = coordinate_to_voxel_index(water_coordinates, self.grid_origin)
+        self.water_index_to_coordinate = {tuple(water_voxel_index[i]): water_coordinates[i] for i in range(water_voxel_index.shape[0])}
+        self.water_coordinate_to_id = {tuple(water_coordinates[i]): i for i in range(water_coordinates.shape[0])}
 
     def _get_voxelized_water_center(self, water_coordinates: np.ndarray, grid_dims: np.ndarray, grid_origin: np.ndarray) -> np.ndarray:
         water_voxel_index = coordinate_to_voxel_index(water_coordinates, grid_origin)
@@ -28,3 +36,6 @@ class WaterClassifyingRule:
         for index in water_index:
             water_coordinates.append(water_index_to_coordinate[tuple(index)])
         return np.vstack(water_coordinates)
+    
+    def classify_water(self, water_coordinates: np.ndarray, ligand_pocket: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+        raise NotImplementedError("This method must be implemented in subclass")
