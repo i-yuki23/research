@@ -39,7 +39,7 @@ def classify_water(ligand_voxel_num, classifying_rule, ligand_pocket_definer):
     
     PATH_TYPE = f"{classifying_rule}/{ligand_pocket_definer}/ligand_pocket_voxel_num_{ligand_voxel_num}/"
     pdb_names = get_all_pdb_names()
-    for pdb_name in pdb_names[:1]:
+    for pdb_name in pdb_names:
         # pdb_name = '4b74'
         print(pdb_name)
 
@@ -62,6 +62,7 @@ def classify_water(ligand_voxel_num, classifying_rule, ligand_pocket_definer):
 
         try:
             water_classifier = WaterClassifier(pdb_name, grid_dims, grid_origin)
+            
             classifying_rule_factory = ClassifyingRuleFactory()
             ligand_pocket_definer_factory = LigandPocketDefinerFactory()
             ligand_pocket_definer = ligand_pocket_definer_factory.get_ligand_pocket_definer(LIGAND_POCKET_DEFINER, pdb_name, grid_dims, grid_origin, LIGAND_VOXEL_NUM)
@@ -79,7 +80,7 @@ def classify_water(ligand_voxel_num, classifying_rule, ligand_pocket_definer):
         # exit()
 
 if __name__ == '__main__':
-    ligand_voxel_nums = [8, 10]
+    ligand_voxel_nums = [10, 9, 8, 6, 4]
     classifying_rules = ["WaterClassifyingRuleCenter", "WaterClassifyingRuleSurface"]
     ligand_pocket_definers = ["LigandPocketDefinerGhecom", "LigandPocketDefinerOriginal"]
 
