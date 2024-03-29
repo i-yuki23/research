@@ -6,3 +6,4 @@ checkpoints/
 *.sh~
 *.out
 *#
+path.py
