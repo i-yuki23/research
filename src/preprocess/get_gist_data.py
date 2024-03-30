@@ -5,6 +5,7 @@ import sys
 sys.path.append('..')
 import numpy as np
 from lib.pdb import get_all_pdb_names
+from lib.voxel import coordinate_to_voxel_index
 from modules.get_gist_map_info import get_gist_map_info
 from modules.get_labeled_water_coords import get_displaceable_water_coords, get_non_displaceable_water_coords
 from modules.voxelizer import voxelizer_atom
@@ -29,7 +30,7 @@ def __get_gist_map_in_water_array(water_coords: np.ndarray, grid_dims: np.ndarra
         gist_map_in_water = np.where((one_water_voxelized[WATER_CHANNEL_INDEX] > WATER_PRESENCE_THRESHOLD), gist_map, 0)
         gist_map_in_water_list.append(gist_map_in_water)
 
-    return gist_map_in_water_list
+    return np.array(gist_map_in_water_list)
 
 def get_gist_data(pdb_name, ligand_voxel_num, classifying_rule, ligand_pocket_definer):
 
@@ -47,6 +48,22 @@ def get_gist_data(pdb_name, ligand_voxel_num, classifying_rule, ligand_pocket_de
     non_displaceable_gist_map_array = __get_gist_map_in_water_array(non_displaceable_water_coords, grid_dims, grid_origin, gist_map)
 
     return displaceable_gist_map_array, non_displaceable_gist_map_array
+
+def get_labeled_water_voxel_indices(pdb_name, grid_origin, ligand_voxel_num, classifying_rule, ligand_pocket_definer):
+
+    displaceable_water_coords = get_displaceable_water_coords(pdb_name, ligand_voxel_num, classifying_rule, ligand_pocket_definer)
+    non_displaceable_water_coords = get_non_displaceable_water_coords(pdb_name, ligand_voxel_num, classifying_rule, ligand_pocket_definer)
+
+    displaceable_water_voxel_indices = np.array([coordinate_to_voxel_index(coordinate, grid_origin) for coordinate in displaceable_water_coords])
+    non_displaceable_water_voxel_indices = np.array([coordinate_to_voxel_index(coordinate, grid_origin) for coordinate in non_displaceable_water_coords])
+
+    return displaceable_water_voxel_indices, non_displaceable_water_voxel_indices
+
+def create_gist_training_data(pdb_name, ligand_voxel_num, classifying_rule, ligand_pocket_definer, data_voxel_num) -> None:
+    displaceable_gist_map_array, non_displaceable_gist_map_array = get_gist_data(pdb_name, ligand_voxel_num, classifying_rule, ligand_pocket_definer)
+    displaceable_water_voxel_indices, non_displaceable_water_voxel_indices = get_labeled_water_voxel_indices(pdb_name, grid_origin, ligand_voxel_num, classifying_rule, ligand_pocket_definer)
+
+    return
 
 def main():
 

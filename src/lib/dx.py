@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 
 #len(file)とグリッド数、原点の座標を返す
-def __dxinfo(path_dx):
+def dxinfo(path_dx):
     with open(path_dx, 'r') as f:
         file = f.readlines()
     grid_dims = file[0].strip().split()[5:8]
@@ -37,7 +37,7 @@ def dx_to_ndarray(path_dx, grid_dims):
     return gist_vox
 
 def read_dx(path_dx):
-    grid_dims, grid_origin = __dxinfo(path_dx)
+    grid_dims, grid_origin = dxinfo(path_dx)
     voxel = dx_to_ndarray(path_dx, grid_dims)
     return voxel, grid_dims, grid_origin
 
