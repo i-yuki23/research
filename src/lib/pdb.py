@@ -1,5 +1,6 @@
 import numpy as np
 import os
+from lib.path import get_data_dir_path
 
 # Constants for readability
 ATOM_COORD_START = 30
@@ -109,7 +110,8 @@ def filter_atoms_and_create_new_pdb(input_pdb_path: str, output_pdb_path: str, t
             if target_atom_id in atom_dict:
                 f.write(atom_dict[target_atom_id])
 
-def get_all_pdb_names(dir_path = "/mnt/dandan/3drism/dir_3DRISM_20181213_155211"):
+def get_all_pdb_names():
+    dir_path = get_data_dir_path()
     return [pdb_name for pdb_name in os.listdir(dir_path) if os.path.isdir(os.path.join(dir_path, pdb_name))]
 
 

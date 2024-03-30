@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import os
+from lib.path import get_xyzv_path
 
 # Constants for readability
 ATOM_COORD_START = 30
@@ -25,7 +26,7 @@ def read_xyzv(pdb_name):
     - grid: np.ndarray, dimensions of the voxel grid
     - init: np.ndarray, starting coordinate of the grid
     """
-    path_to_xyzv = os.path.join("/mnt/dandan/3drism/dir_3DRISM_20181213_155211", pdb_name, "analysis.O.1.xyzv")
+    path_to_xyzv = get_xyzv_path(pdb_name)
     if not os.path.exists(path_to_xyzv):
         raise FileNotFoundError(f"{path_to_xyzv} does not exist.")
 
