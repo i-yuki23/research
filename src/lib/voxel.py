@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import os
-from lib.path import get_xyzv_path
+from lib.path import get_xyzv_path, get_gist_path
 from lib.dx import dxinfo
 
 # Constants for readability
@@ -10,7 +10,7 @@ ATOM_COORD_END = 54
 ATOMIC_SYMBOL_POS = 77
 
 def coordinate_to_voxel_index(coordinate, pdb_name, length_voxel=0.5):
-    _, grid_origin = dxinfo(get)
+    _, grid_origin = dxinfo(get_gist_path(pdb_name))
     return ((coordinate - grid_origin) // length_voxel).astype(np.int64)
 
 def coordinate_to_grid(coordinate, grid_origin, length_voxel):

@@ -5,6 +5,7 @@ from lib.voxel import coordinate_to_voxel_index, coordinate_to_grid
 DELTA_INDEX = 1
 
 def voxelizer_atom(
+        pdb_name,
         atomic_symbols, 
         atom_coordinates,
         # atoms_amino,
@@ -36,7 +37,7 @@ def voxelizer_atom(
         #     continue
 
         # 各原子のボクセル番号
-        atom_grid = coordinate_to_voxel_index(atom_xyz, grid_origin, length_voxel)
+        atom_grid = coordinate_to_voxel_index(atom_xyz, pdb_name, length_voxel)
         # 原子のボクセル番号がボクセルの範囲内に収まっているかどうか
         skip = False
         for grid, length in zip(atom_grid, grid_dims):
