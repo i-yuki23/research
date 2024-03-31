@@ -1,6 +1,6 @@
 import numpy as np
 import os
-from lib.path import get_data_dir_path
+from lib.path import get_nas_data_dir
 
 # Constants for readability
 ATOM_COORD_START = 30
@@ -111,7 +111,7 @@ def filter_atoms_and_create_new_pdb(input_pdb_path: str, output_pdb_path: str, t
                 f.write(atom_dict[target_atom_id])
 
 def get_all_pdb_names():
-    dir_path = get_data_dir_path()
+    dir_path = get_nas_data_dir()
     return [pdb_name for pdb_name in os.listdir(dir_path) if os.path.isdir(os.path.join(dir_path, pdb_name))]
 
 

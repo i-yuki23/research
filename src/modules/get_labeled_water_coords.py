@@ -13,13 +13,19 @@ def get_displaceable_water_coords(pdb_name: str, ligand_voxel_num: int, classify
     - np.ndarray, coordinates of displaceable water molecules
     """
     displaceable_water_path = get_displaceable_water_path(pdb_name, ligand_voxel_num, classifying_rule, ligand_pocket_definer)
-    displaceable_water_coords = get_coordinates_from_pdb(displaceable_water_path)
+    try:
+        displaceable_water_coords = get_coordinates_from_pdb(displaceable_water_path)
+    except FileNotFoundError:
+        raise FileNotFoundError(f"Displaceable water file for {pdb_name} does not exist.")
     
     return displaceable_water_coords
     
 def get_non_displaceable_water_coords(pdb_name: str, ligand_voxel_num: int, classifying_rule: str, ligand_pocket_definer: str) -> np.ndarray:
     
     non_displaceable_water_path = get_non_displaceable_water_path(pdb_name, ligand_voxel_num, classifying_rule, ligand_pocket_definer)
-    non_displaceable_water_coords = get_coordinates_from_pdb(non_displaceable_water_path)
+    try:
+        non_displaceable_water_coords = get_coordinates_from_pdb(non_displaceable_water_path)
+    except FileNotFoundError:
+        raise FileNotFoundError(f"Non-displaceable water file for {pdb_name} does not exist.")
 
     return non_displaceable_water_coords    
