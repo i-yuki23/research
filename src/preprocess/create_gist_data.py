@@ -12,7 +12,7 @@ from modules.get_labeled_water_coords import get_displaceable_water_coords, get_
 from modules.voxelizer import voxelizer_atom
 from modules.extract_training_data_voxel import extract_training_data_voxel
 from lib.path import get_training_data_path
-from lib.helper import mkdir_and_save_np_file
+from lib.helper import make_dir
 
 WATER_CHANNEL_INDEX = 2
 WATER_PRESENCE_THRESHOLD = 10**(-6)
@@ -23,11 +23,10 @@ LIGAND_POCKET_DEFINER = "LigandPocketDefinerGhecom"
 DATA_VOXEL_NUM = 10
 
 
-def __get_gist_map_in_water_array(pdb_name, water_coords: np.ndarray, grid_dims: np.ndarray, grid_origin: np.ndarray, gist_map: np.ndarray) -> np.ndarray:
+def __get_gist_map_in_water_array(water_coords: np.ndarray, grid_dims: np.ndarray, grid_origin: np.ndarray, gist_map: np.ndarray) -> np.ndarray:
     gist_map_in_water_list = []
     for water_coord in water_coords:
         one_water_voxelized = voxelizer_atom(
-            pdb_name=pdb_name,
             atomic_symbols=['O'],
             atom_coordinates=[water_coord],  # atom_coordinatesは2次元配列を受け取るから[]が必要
             grid_origin=grid_origin,
@@ -48,8 +47,8 @@ def get_gist_data(pdb_name, gist_map, grid_dims, grid_origin, ligand_voxel_num, 
     displaceable_water_coords = get_displaceable_water_coords(pdb_name, ligand_voxel_num, classifying_rule, ligand_pocket_definer)
     non_displaceable_water_coords = get_non_displaceable_water_coords(pdb_name, ligand_voxel_num, classifying_rule, ligand_pocket_definer)
     
-    displaceable_gist_map_array = __get_gist_map_in_water_array(pdb_name, displaceable_water_coords, grid_dims, grid_origin, gist_map)
-    non_displaceable_gist_map_array = __get_gist_map_in_water_array(pdb_name, non_displaceable_water_coords, grid_dims, grid_origin, gist_map)
+    displaceable_gist_map_array = __get_gist_map_in_water_array(displaceable_water_coords, grid_dims, grid_origin, gist_map)
+    non_displaceable_gist_map_array = __get_gist_map_in_water_array(non_displaceable_water_coords, grid_dims, grid_origin, gist_map)
 
     return displaceable_gist_map_array, non_displaceable_gist_map_array
 
@@ -61,14 +60,16 @@ def save_gist_training_data(pdb_name, gist_map, grid_dims, grid_origin, ligand_v
     non_displaceable_water_coords = get_non_displaceable_water_coords(pdb_name, ligand_voxel_num, classifying_rule, ligand_pocket_definer)
 
     for displaceable_water_coord, displaceable_gist_map in zip(displaceable_water_coords, displaceable_gist_map_array):
-        displaceable_gist_data = extract_training_data_voxel(pdb_name=pdb_name, water_coordinate=displaceable_water_coord, gr_or_gist=displaceable_gist_map, grid_dims=grid_dims, data_voxel_num=data_voxel_num)
+        displaceable_gist_data = extract_training_data_voxel(water_coordinate=displaceable_water_coord, gr_or_gist=displaceable_gist_map, grid_origin=grid_origin, grid_dims=grid_dims, data_voxel_num=data_voxel_num)
         displaceable_save_path = get_training_data_path("gist", "displaceable", data_voxel_num, classifying_rule, ligand_pocket_definer, ligand_voxel_num, pdb_name)
-        mkdir_and_save_np_file(displaceable_save_path, displaceable_gist_data)
+        make_dir(displaceable_save_path)
+        np.save(displaceable_save_path, displaceable_gist_data)
     
     for non_displaceable_water_coord, non_displaceable_gist_map in zip(non_displaceable_water_coords, non_displaceable_gist_map_array):
-        non_displaceable_gist_data = extract_training_data_voxel(pdb_name=pdb_name, water_coordinate=non_displaceable_water_coord, gr_or_gist=non_displaceable_gist_map, grid_dims=grid_dims, data_voxel_num=data_voxel_num)
+        non_displaceable_gist_data = extract_training_data_voxel(water_coordinate=non_displaceable_water_coord, gr_or_gist=non_displaceable_gist_map, grid_dims=grid_dims, grid_origin=grid_origin, data_voxel_num=data_voxel_num)
         non_displaceable_save_path = get_training_data_path("gist", "non_displaceable", data_voxel_num, classifying_rule, ligand_pocket_definer, ligand_voxel_num, pdb_name)
-        mkdir_and_save_np_file(non_displaceable_save_path, non_displaceable_gist_data)
+        make_dir(non_displaceable_save_path)
+        np.save(non_displaceable_save_path, non_displaceable_gist_data)
 
 
 def main():

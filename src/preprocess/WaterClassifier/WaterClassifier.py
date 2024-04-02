@@ -2,7 +2,6 @@ import numpy as np
 from lib.voxel import coordinate_to_voxel_index
 from lib.pdb import filter_atoms_and_create_new_pdb
 from lib.path import get_water_path
-from modules.get_voxelized_ligand import get_voxelized_ligand
 from typing import Tuple
 
 class WaterClassifier:
