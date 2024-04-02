@@ -29,7 +29,7 @@ def extract_points_within_threshold(coords1, coords2, threshold):
         extracted_points = np.vstack(extracted_points)
     return np.array(extracted_points)
 
-def mkdir_and_save_np_file(save_file_path, data):
+def make_dir(save_file_path):
     """ファイルを保存するためのディレクトリを作成し、ファイルを保存する
     Parameters
     ----------
@@ -42,4 +42,3 @@ def mkdir_and_save_np_file(save_file_path, data):
     if not os.path.exists(directory):
         # ディレクトリが存在しない場合、ディレクトリを作成（親ディレクトリも含めて）
         os.makedirs(directory, exist_ok=True)
-    np.save(save_file_path, data)

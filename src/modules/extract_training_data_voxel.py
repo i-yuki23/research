@@ -1,8 +1,8 @@
 import numpy as np
 from lib.voxel import coordinate_to_voxel_index
 
-def extract_training_data_voxel(pdb_name, water_coordinate, gr_or_gist, grid_dims, data_voxel_num):
-    water_voxel_index = coordinate_to_voxel_index(water_coordinate, pdb_name)
+def extract_training_data_voxel(water_coordinate, gr_or_gist, grid_origin, grid_dims, data_voxel_num):
+    water_voxel_index = coordinate_to_voxel_index(water_coordinate, grid_origin)
     # 各次元におけるスライス範囲を計算
     slices = []
     for i in range(3):
