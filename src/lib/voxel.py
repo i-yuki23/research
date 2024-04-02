@@ -2,15 +2,13 @@ import pandas as pd
 import numpy as np
 import os
 from lib.path import get_xyzv_path, get_gist_path
-from lib.dx import dxinfo
 
 # Constants for readability
 ATOM_COORD_START = 30
 ATOM_COORD_END = 54
 ATOMIC_SYMBOL_POS = 77
 
-def coordinate_to_voxel_index(coordinate, pdb_name, length_voxel=0.5):
-    _, grid_origin = dxinfo(get_gist_path(pdb_name))
+def coordinate_to_voxel_index(coordinate, grid_origin, length_voxel=0.5):
     return ((coordinate - grid_origin) // length_voxel).astype(np.int64)
 
 def coordinate_to_grid(coordinate, grid_origin, length_voxel):
@@ -40,6 +38,14 @@ def read_xyzv(pdb_name):
     
     grid_origin = np.array([x.min(), y.min(), z.min()])
     return voxel, np.array(grid_dims), grid_origin
+
+def get_voxel_info(pdb_name):
+    voxel_path = get_gist_path(pdb_name)
+    with open(voxel_path, 'r') as f:
+        file = f.readlines()
+    grid_dims = file[0].strip().split()[5:8]
+    grid_origin = file[1].strip().split()[1:4]
+    return np.array([int(grid_dims[i])for i in range(3)]), np.array([float(grid_origin[i])for i in range(3)])
 
 def extract_surroundings_voxel(voxel_indices, grid_dims, voxel_num):
     """
