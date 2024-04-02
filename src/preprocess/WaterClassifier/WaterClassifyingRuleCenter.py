@@ -14,7 +14,7 @@ class WaterClassifyingRuleCenter(WaterClassifyingRule):
         return np.any(voxelized_ligand > threshold, axis=0)
     
     def __load_ligand(self) -> None:
-        self.voxelized_ligand = get_voxelized_ligand(self.pdb_name)
+        self.voxelized_ligand = get_voxelized_ligand(pdb_name=self.pdb_name, grid_dims=self.grid_dims, grid_origin=self.grid_origin)
 
     def classify_water(self, water_coordinates: np.ndarray, ligand_pocket: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
         self.__load_ligand()

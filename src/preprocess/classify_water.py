@@ -23,24 +23,20 @@ import sys
 sys.path.append('..')
 import traceback
 
-from lib.voxel import read_xyzv
+from lib.voxel import get_voxel_info
 from lib.pdb import get_coordinates_from_pdb, get_all_pdb_names
 from lib.path import get_water_path
 from WaterClassifier.WaterClassifier import WaterClassifier
 from WaterClassifier.ClassifyingRuleFactory import ClassifyingRuleFactory
 from WaterClassifier.LigandPocketDefinerFactory import LigandPocketDefinerFactory
 DATA_DIR = "/home/ito/research/data/labeled_water/"
-LIGAND_VOXEL_NUM = 6
-CLASSIFYING_RULE = "WaterClassifyingRuleCenter"
-LIGAND_POCKET_DEFINER = "LigandPocketDefinerGhecom"
-# PATH_TYPE = f"{CLASSIFYING_RULE}/{LIGAND_POCKET_DEFINER}/ligand_pocket_voxel_num_{LIGAND_VOXEL_NUM}/"
 
 def classify_water(ligand_voxel_num, classifying_rule, ligand_pocket_definer):
     
     PATH_TYPE = f"{classifying_rule}/{ligand_pocket_definer}/ligand_pocket_voxel_num_{ligand_voxel_num}/"
     pdb_names = get_all_pdb_names()
     for pdb_name in pdb_names:
-        # pdb_name = '4b74'
+        pdb_name = '4b74'
         print(pdb_name)
 
         paths = {
@@ -58,15 +54,15 @@ def classify_water(ligand_voxel_num, classifying_rule, ligand_pocket_definer):
 
         water_path = get_water_path(pdb_name)
         water_coordinates = get_coordinates_from_pdb(water_path)
-        _, grid_dims, grid_origin = read_xyzv(pdb_name)
+        grid_dims, grid_origin = get_voxel_info(pdb_name)
 
         try:
             water_classifier = WaterClassifier(pdb_name, grid_dims, grid_origin)
             
             classifying_rule_factory = ClassifyingRuleFactory()
             ligand_pocket_definer_factory = LigandPocketDefinerFactory()
-            ligand_pocket_definer = ligand_pocket_definer_factory.get_ligand_pocket_definer(LIGAND_POCKET_DEFINER, pdb_name, grid_dims, grid_origin, LIGAND_VOXEL_NUM)
-            water_classifying_rule = classifying_rule_factory.get_rule(CLASSIFYING_RULE, pdb_name, grid_dims, grid_origin)
+            ligand_pocket_definer = ligand_pocket_definer_factory.get_ligand_pocket_definer(ligand_pocket_definer, pdb_name, grid_dims, grid_origin, ligand_voxel_num)
+            water_classifying_rule = classifying_rule_factory.get_rule(classifying_rule, pdb_name, grid_dims, grid_origin)
             water_classifier.define_ligand_pocket(ligand_pocket_definer)
             water_classifier.create_convert_dict(water_coordinates)
             displaceable_water_ids, non_displaceable_water_ids = water_classifier.get_classified_water_ids(water_coordinates, water_classifying_rule)
@@ -78,6 +74,7 @@ def classify_water(ligand_voxel_num, classifying_rule, ligand_pocket_definer):
             print(f"Error: {e}\n{traceback.format_exc()}")
             continue
         # exit()
+        break
 
 if __name__ == '__main__':
     ligand_voxel_nums = [10, 9, 8, 6, 4]
