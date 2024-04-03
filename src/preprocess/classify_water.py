@@ -31,12 +31,12 @@ from WaterClassifier.ClassifyingRuleFactory import ClassifyingRuleFactory
 from WaterClassifier.LigandPocketDefinerFactory import LigandPocketDefinerFactory
 DATA_DIR = "/home/ito/research/data/labeled_water/"
 
-def classify_water(ligand_voxel_num, classifying_rule, ligand_pocket_definer):
+def classify_water(ligand_voxel_num, classifying_rule_name, ligand_pocket_definer_name):
     
-    PATH_TYPE = f"{classifying_rule}/{ligand_pocket_definer}/ligand_pocket_voxel_num_{ligand_voxel_num}/"
+    PATH_TYPE = f"{classifying_rule_name}/{ligand_pocket_definer_name}/ligand_pocket_voxel_num_{ligand_voxel_num}/"
     pdb_names = get_all_pdb_names()
     for pdb_name in pdb_names:
-        pdb_name = '4b74'
+        # pdb_name = '4b74'
         print(pdb_name)
 
         paths = {
@@ -61,8 +61,8 @@ def classify_water(ligand_voxel_num, classifying_rule, ligand_pocket_definer):
             
             classifying_rule_factory = ClassifyingRuleFactory()
             ligand_pocket_definer_factory = LigandPocketDefinerFactory()
-            ligand_pocket_definer = ligand_pocket_definer_factory.get_ligand_pocket_definer(ligand_pocket_definer, pdb_name, grid_dims, grid_origin, ligand_voxel_num)
-            water_classifying_rule = classifying_rule_factory.get_rule(classifying_rule, pdb_name, grid_dims, grid_origin)
+            ligand_pocket_definer = ligand_pocket_definer_factory.get_ligand_pocket_definer(ligand_pocket_definer_name, pdb_name, grid_dims, grid_origin, ligand_voxel_num)
+            water_classifying_rule = classifying_rule_factory.get_rule(classifying_rule_name, pdb_name, grid_dims, grid_origin)
             water_classifier.define_ligand_pocket(ligand_pocket_definer)
             water_classifier.create_convert_dict(water_coordinates)
             displaceable_water_ids, non_displaceable_water_ids = water_classifier.get_classified_water_ids(water_coordinates, water_classifying_rule)
@@ -74,15 +74,15 @@ def classify_water(ligand_voxel_num, classifying_rule, ligand_pocket_definer):
             print(f"Error: {e}\n{traceback.format_exc()}")
             continue
         # exit()
-        break
+        # break
 
 if __name__ == '__main__':
     ligand_voxel_nums = [10, 9, 8, 6, 4]
-    classifying_rules = ["WaterClassifyingRuleCenter", "WaterClassifyingRuleSurface"]
-    ligand_pocket_definers = ["LigandPocketDefinerGhecom", "LigandPocketDefinerOriginal"]
+    classifying_rule_names = ["WaterClassifyingRuleCenter", "WaterClassifyingRuleSurface"]
+    ligand_pocket_definer_names = ["LigandPocketDefinerGhecom", "LigandPocketDefinerOriginal"]
 
     for ligand_voxel_num in ligand_voxel_nums:
-        for classifying_rule in classifying_rules:
-            for ligand_pocket_definer in ligand_pocket_definers:
-                print(f"ligand_voxel_num: {ligand_voxel_num}, classifying_rule: {classifying_rule}, ligand_pocket_definer: {ligand_pocket_definer}")
-                classify_water(ligand_voxel_num, classifying_rule, ligand_pocket_definer)
+        for classifying_rule_name in classifying_rule_names:
+            for ligand_pocket_definer_name in ligand_pocket_definer_names:
+                print(f"ligand_voxel_num: {ligand_voxel_num}, classifying_rule: {classifying_rule_name}, ligand_pocket_definer: {ligand_pocket_definer_name}")
+                classify_water(ligand_voxel_num, classifying_rule_name, ligand_pocket_definer_name)

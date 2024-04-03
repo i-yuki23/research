@@ -37,8 +37,7 @@ def get_ligand_pocket_form_ghecom(pdb_name, grid_dims, grid_origin, voxel_num): 
     ghecom_clusters = get_clusters_from_ghecom(pdb_name)  # ポケット領域を定義する点の座標リスト（実際の座標に置き換える）
     ligand_pocket_grids_list = extract_ligand_pocket_grids(ligand_coords, ghecom_clusters, threshold)
     if not ligand_pocket_grids_list:
-        print("No points extracted. Ending process.")
-        return  
+        print("No points extracted.")
     ligand_pocket_grids = [item for sublist in ligand_pocket_grids_list.values() for item in sublist]  # listをまとめる（全グリットから抽出するとき）
     # ligand_pocket_grids = get_dominant_cluster(ligand_pocket_grids_list, ghecom_clusters)
     ligand_pocket_voxel_indices = coordinate_to_voxel_index(ligand_pocket_grids, grid_origin)
