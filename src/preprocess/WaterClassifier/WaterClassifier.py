@@ -11,13 +11,9 @@ class WaterClassifier:
         self.pdb_name = pdb_name
         self.grid_dims = grid_dims
         self.grid_origin = grid_origin
-        # self.ligand_pocket_path = ligand_pocket_path
         self.ligand_pocket = None
         self.water_index_to_coordinate = None
         self.water_coordinate_to_id = None
-
-    # def load_ligand(self) -> None:
-    #     self.ligand_pocket = np.load(self.ligand_pocket_path)
     
     def define_ligand_pocket(self, ligand_pocket_definer):
         self.ligand_pocket = ligand_pocket_definer.define_ligand_pocket()
