@@ -21,3 +21,9 @@ class SingleDataLoader(DataLoader):
         all_data_shuffled, all_labels_shuffled = self._shuffle_data(all_data, all_labels)
 
         return all_data_shuffled, all_labels_shuffled
+
+    def load_data(self, pdb_list_path, data_voxel_num):
+        with open(pdb_list_path, 'r') as f:
+            pdb_list = f.read().splitlines()
+            data, labels = self._get_data(pdb_list, self.training_data_dir, data_voxel_num)
+        return data, labels

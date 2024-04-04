@@ -40,8 +40,6 @@ class DataLoader:
 
 
     def load_data(self, pdb_list_path, data_voxel_num):
-        with open(pdb_list_path, 'r') as f:
-            pdb_list = f.read().splitlines()
-            data, labels = self._get_data(pdb_list, self.training_data_dir, data_voxel_num)
-        return data, labels
+        raise NotImplementedError("This method must be implemented in subclass")
+
         
