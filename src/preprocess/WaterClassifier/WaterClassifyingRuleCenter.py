@@ -22,15 +22,17 @@ class WaterClassifyingRuleCenter(WaterClassifyingRule):
 
         ligand_presence = self.__is_ligand_present(self.voxelized_ligand, self.LIGAND_PRESENT_THRESHOLD)
 
+        self._create_convert_dict(water_coordinates)
         displaceable_voxelized_water_center = np.where(((ligand_pocket==1) & (voxelized_water_center==1)) & ligand_presence, 1, 0)
         if not np.any(displaceable_voxelized_water_center):
-            raise ValueError("No displaceable water molecules")
-        self._create_convert_dict(water_coordinates)
-        displaceable_water_coordinates = self._convert_voxel_to_water_coordinates(displaceable_voxelized_water_center, self.water_index_to_coordinate)
+            displaceable_water_coordinates = np.zeros((0, 3))
+        else:
+            displaceable_water_coordinates = self._convert_voxel_to_water_coordinates(displaceable_voxelized_water_center, self.water_index_to_coordinate)
 
         non_displaceable_voxelized_water_center = np.where(((ligand_pocket==1) & (voxelized_water_center==1)) & (~ligand_presence), 1, 0)
         if not np.any(non_displaceable_voxelized_water_center):
-            raise ValueError("No non-displaceable water molecules")
-        non_displaceable_water_coordinates = self._convert_voxel_to_water_coordinates(non_displaceable_voxelized_water_center, self.water_index_to_coordinate)
+            non_displaceable_water_coordinates = np.zeros((0, 3))
+        else:
+            non_displaceable_water_coordinates = self._convert_voxel_to_water_coordinates(non_displaceable_voxelized_water_center, self.water_index_to_coordinate)
         
         return displaceable_water_coordinates, non_displaceable_water_coordinates

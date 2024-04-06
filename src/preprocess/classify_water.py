@@ -59,10 +59,11 @@ def classify_water(pdb_name, ligand_voxel_num, classifying_rule_name, ligand_poc
     water_classifier.define_ligand_pocket(ligand_pocket_definer)
     water_classifier.create_convert_dict(water_coordinates)
     displaceable_water_ids, non_displaceable_water_ids = water_classifier.get_classified_water_ids(water_coordinates, water_classifying_rule)
-    water_classifier.save_classified_water_as_pdb(displaceable_water_ids=displaceable_water_ids,
-                                            non_displaceable_water_ids=non_displaceable_water_ids,
-                                            output_path_displaceable=paths["output_displaceable"],
-                                            output_path_non_displaceable=paths["output_non_displaceable"])
+    print(displaceable_water_ids, non_displaceable_water_ids)
+    # water_classifier.save_classified_water_as_pdb(displaceable_water_ids=displaceable_water_ids,
+    #                                         non_displaceable_water_ids=non_displaceable_water_ids,
+    #                                         output_path_displaceable=paths["output_displaceable"],
+    #                                         output_path_non_displaceable=paths["output_non_displaceable"])
 
 
 def main():
@@ -76,14 +77,15 @@ def main():
             for ligand_pocket_definer_name in ligand_pocket_definer_names:
                 for pdb_name in pdb_names:
 
-                    # pdb_name = '4ty6'
-                    # ligand_pocket_definer_name = 'LigandPocketDefinerGhecom'
-                    # ligand_voxel_num = 10
+                    pdb_name = '2p15'
+                    ligand_pocket_definer_name = 'LigandPocketDefinerOriginal'
+                    classifying_rule_name = 'WaterClassifyingRuleCenter'
+                    ligand_voxel_num = 10
 
                     print(f"ligand_voxel_num: {ligand_voxel_num}, classifying_rule: {classifying_rule_name}, ligand_pocket_definer: {ligand_pocket_definer_name}")
                     try:
                         classify_water(pdb_name, ligand_voxel_num, classifying_rule_name, ligand_pocket_definer_name)
-                        # exit()
+                        exit()
                     except ValueError as e:
                         # 特定のエラーを捕捉して処理。ここではエラーメッセージを出力するだけ
                         print(f"Error processing {pdb_name}: {e}")
