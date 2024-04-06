@@ -65,7 +65,7 @@ def classify_water(pdb_name, ligand_voxel_num, classifying_rule_name, ligand_poc
                                             output_path_non_displaceable=paths["output_non_displaceable"])
 
 
-if __name__ == '__main__':
+def main():
     ligand_voxel_nums = [10, 9, 8, 6, 4]
     classifying_rule_names = ["WaterClassifyingRuleCenter", "WaterClassifyingRuleSurface"]
     ligand_pocket_definer_names = ["LigandPocketDefinerGhecom", "LigandPocketDefinerOriginal"]
@@ -75,9 +75,15 @@ if __name__ == '__main__':
         for classifying_rule_name in classifying_rule_names:
             for ligand_pocket_definer_name in ligand_pocket_definer_names:
                 for pdb_name in pdb_names:
+
+                    # pdb_name = '4ty6'
+                    # ligand_pocket_definer_name = 'LigandPocketDefinerGhecom'
+                    # ligand_voxel_num = 10
+
                     print(f"ligand_voxel_num: {ligand_voxel_num}, classifying_rule: {classifying_rule_name}, ligand_pocket_definer: {ligand_pocket_definer_name}")
                     try:
                         classify_water(pdb_name, ligand_voxel_num, classifying_rule_name, ligand_pocket_definer_name)
+                        # exit()
                     except ValueError as e:
                         # 特定のエラーを捕捉して処理。ここではエラーメッセージを出力するだけ
                         print(f"Error processing {pdb_name}: {e}")
@@ -85,3 +91,6 @@ if __name__ == '__main__':
                     except Exception as e:
                         # 予期しない他のエラーを捕捉して処理
                         print(f"Unexpected error processing {pdb_name}: {e}")
+
+if __name__ == "__main__":
+    main()
