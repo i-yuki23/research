@@ -1,36 +1,42 @@
 from WaterClassifier.WaterClassifyingRule import WaterClassifyingRule
 import numpy as np
 from typing import Tuple
-from modules.get_voxelized_ligand import get_voxelized_ligand
+from lib.helper import extract_points_within_threshold
+from lib.path import get_ligand_path
+from modules.get_atomic_symbol_coords_dict import get_atomic_symbol_coords_dict_from_pdb
+
 
 class WaterClassifyingRuleCenter(WaterClassifyingRule):
-    LIGAND_PRESENT_THRESHOLD = 1-np.exp(-1)
-
     def __init__(self, pdb_name, grid_dims, grid_origin):
         super().__init__(pdb_name, grid_dims, grid_origin)
-        self.voxelized_ligand = None
 
-    def __is_ligand_present(self, voxelized_ligand: np.ndarray, threshold=LIGAND_PRESENT_THRESHOLD) -> np.ndarray:
-        return np.any(voxelized_ligand > threshold, axis=0)
     
-    def __load_ligand(self) -> None:
-        self.voxelized_ligand = get_voxelized_ligand(pdb_name=self.pdb_name, grid_dims=self.grid_dims, grid_origin=self.grid_origin)
-
     def classify_water(self, water_coordinates: np.ndarray, ligand_pocket: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
-        self.__load_ligand()
-        voxelized_water_center = self._get_voxelized_water_center(water_coordinates, self.grid_dims, self.grid_origin)
 
-        ligand_presence = self.__is_ligand_present(self.voxelized_ligand, self.LIGAND_PRESENT_THRESHOLD)
+        ligand_path = get_ligand_path(self.pdb_name)
+        ligand_atomic_symbol_coords_dict = get_atomic_symbol_coords_dict_from_pdb(ligand_path)
 
-        displaceable_voxelized_water_center = np.where(((ligand_pocket==1) & (voxelized_water_center==1)) & ligand_presence, 1, 0)
-        if not np.any(displaceable_voxelized_water_center):
-            raise ValueError("No displaceable water molecules")
-        self._create_convert_dict(water_coordinates)
-        displaceable_water_coordinates = self._convert_voxel_to_water_coordinates(displaceable_voxelized_water_center, self.water_index_to_coordinate)
+        water_coordinates_inside_ligand_pocket = self._get_water_coordinates_inside_ligand_pocket(water_coordinates, ligand_pocket)
+        if water_coordinates_inside_ligand_pocket.size == 0:
+            raise ValueError("No water molecules inside ligand pocket")
 
-        non_displaceable_voxelized_water_center = np.where(((ligand_pocket==1) & (voxelized_water_center==1)) & (~ligand_presence), 1, 0)
-        if not np.any(non_displaceable_voxelized_water_center):
-            raise ValueError("No non-displaceable water molecules")
-        non_displaceable_water_coordinates = self._convert_voxel_to_water_coordinates(non_displaceable_voxelized_water_center, self.water_index_to_coordinate)
-        
+        temp_displaceable_water_coords = []
+        for atomic_symbol, coords in ligand_atomic_symbol_coords_dict.items():
+            threshold = self.RADIUSES[atomic_symbol]
+            points = extract_points_within_threshold(coords, water_coordinates_inside_ligand_pocket, threshold)
+            if points.size > 0:
+                temp_displaceable_water_coords.append(points)
+
+        if temp_displaceable_water_coords:
+            displaceable_water_coordinates = np.vstack(temp_displaceable_water_coords)
+            displaceable_water_coordinates = np.unique(displaceable_water_coordinates, axis=0)
+        else:
+            displaceable_water_coordinates = np.empty((0, 3))
+
+        mask = np.ones(len(water_coordinates_inside_ligand_pocket), dtype=bool)
+        for displaceable_water_coord in displaceable_water_coordinates:
+            mask = mask & ~np.all(water_coordinates_inside_ligand_pocket == displaceable_water_coord, axis=1)
+        non_displaceable_water_coordinates = water_coordinates_inside_ligand_pocket[mask]
+        # non_displaceable_water_coordinates = np.array(list(set(map(tuple, water_coordinates_inside_ligand_pocket)) - set(map(tuple, displaceable_water_coordinates))))
+
         return displaceable_water_coordinates, non_displaceable_water_coordinates
