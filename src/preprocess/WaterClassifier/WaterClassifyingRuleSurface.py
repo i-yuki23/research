@@ -6,27 +6,16 @@ from modules.get_atomic_symbol_coords_dict import get_atomic_symbol_coords_dict_
 from lib.path import get_ligand_path
 
 class WaterClassifyingRuleSurface(WaterClassifyingRule):
-    RADIUSES = {'C': 1.69984, 'N': 1.62500, 'O': 1.51369, 'S': 1.78180, 'H': 1.2, 'B' : 1.92, 'F' : 1.47, 'P' : 1.80, 'I' : 1.98}
 
     def __init__(self, pdb_name, grid_dims, grid_origin):
         super().__init__(pdb_name, grid_dims, grid_origin)
-
-
-    def __get_water_coordinates_inside_ligand_pocket(self, water_coordinates: np.ndarray, ligand_pocket: np.ndarray) -> np.ndarray:
-
-        voxelized_water_center = self._get_voxelized_water_center(water_coordinates, self.grid_dims, self.grid_origin)
-        voxelized_water_center_inside_ligand_pocket = np.where((voxelized_water_center == 1) & (ligand_pocket == 1), 1, 0)
-        self._create_convert_dict(water_coordinates)
-        water_coordinates_inside_ligand_pocket = self._convert_voxel_to_water_coordinates(voxelized_water_center_inside_ligand_pocket, self.water_index_to_coordinate)
-
-        return water_coordinates_inside_ligand_pocket
     
     def classify_water(self, water_coordinates: np.ndarray, ligand_pocket: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
 
         ligand_path = get_ligand_path(self.pdb_name)
         ligand_atomic_symbol_coords_dict = get_atomic_symbol_coords_dict_from_pdb(ligand_path)
 
-        water_coordinates_inside_ligand_pocket = self.__get_water_coordinates_inside_ligand_pocket(water_coordinates, ligand_pocket)
+        water_coordinates_inside_ligand_pocket = self._get_water_coordinates_inside_ligand_pocket(water_coordinates, ligand_pocket)
         if water_coordinates_inside_ligand_pocket.size == 0:
             raise ValueError("No water molecules inside ligand pocket")
 
