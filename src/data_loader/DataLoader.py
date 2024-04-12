@@ -3,24 +3,27 @@ import glob
 import os
 from lib.path import get_training_data_dir
 
+# In current implementation, we save one training data for one protain, not for one water molecule. It might be better to change that.
 class DataLoader:
 
     def __init__(self, training_data_dir):
         self.training_data_dir = training_data_dir
 
-    def _get_ndarray(self, pdb_list, training_data_dir, data_voxel_num):
+    def _get_ndarray(self, pdb_name, training_data_dir):
+        data_path = os.path.join(training_data_dir, f'{pdb_name}/*.npy')
+        data_path_list = glob.glob(data_path)
+        if len(data_path_list) == 0:
+            # print(f'No data found for {pdb_name}')
+            raise FileNotFoundError(f'No data found for {pdb_name}')
         data_list = []
-        for pdb_name in pdb_list:
-            data_path = os.path.join(training_data_dir, f'{pdb_name}/*.npy')
-            data_path_list = glob.glob(data_path)
-            if len(data_path_list) == 0:
-                print(f'No data found for {pdb_name}')
-                continue
-
-            for data_name in data_path_list:
-                loaded_data = np.load(data_name)
-                loaded_data_reshaped = loaded_data.reshape((1, data_voxel_num*2+1, data_voxel_num*2+1, data_voxel_num*2+1, 1))
-                data_list.append(loaded_data_reshaped)
+        for data_name in data_path_list:
+            loaded_data = np.load(data_name)
+            if loaded_data.size == 0:
+                # print(f"This is empty data: {pdb_name}")
+                raise ValueError(f"This is empty data: {pdb_name}")
+            print(loaded_data.shape)
+            loaded_data_reshaped = loaded_data[:, :, :, :, np.newaxis]
+            data_list.append(loaded_data_reshaped)
         data_np = np.concatenate(data_list, axis=0)
         return data_np
 

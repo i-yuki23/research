@@ -21,8 +21,8 @@ def train_func(x_train, y_train, x_val, y_val, x_test, y_test, input_shape, mode
         model_checkpoint_callback = ModelCheckpoint(
         filepath=checkpoint_path,
         save_weights_only=True,
-        monitor=dice_coefficient,
-        mode='max',
+        monitor='val_loss',
+        mode='min',
         save_best_only=True)
         callbacks_list.append(model_checkpoint_callback)
         

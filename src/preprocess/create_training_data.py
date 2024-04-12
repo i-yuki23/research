@@ -5,7 +5,7 @@ from Class.TrainingDataCreator.TrainingDataCreatorGr import TrainingDataCreatorG
 from Class.TrainingDataCreator.TrainingDataCreatorGist import TrainingDataCreatorGist
 
 
-LIGNAD_POCKET_VOXEL_NUM = 9
+LIGNAD_POCKET_VOXEL_NUM = 8
 CLASSIFYING_RULE = "WaterClassifyingRuleSurface"
 LIGAND_POCKET_DEFINER = "LigandPocketDefinerOriginal"
 DATA_VOXEL_NUM = 10
