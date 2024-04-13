@@ -9,9 +9,11 @@ class TrainingDataCreatorGr(TrainingDataCreator):
     def __init__(self, pdb_name, ligand_voxel_num, classifying_rule, ligand_pocket_definer, data_voxel_num):
         super().__init__(pdb_name, ligand_voxel_num, classifying_rule, ligand_pocket_definer, data_voxel_num)
 
-    def _set_save_path(self):
-        self.displaceable_save_path = get_training_data_path('gr', 'displaceable', self.data_voxel_num, self.classifying_rule, self.ligand_pocket_definer, self.ligand_voxel_num, self.pdb_name)
-        self.non_displaceable_save_path = get_training_data_path('gr', 'non_displaceable', self.data_voxel_num, self.classifying_rule, self.ligand_pocket_definer, self.ligand_voxel_num, self.pdb_name)
+    def _get_save_path_dis(self, water_id):
+        return get_training_data_path('gr', 'displaceable', self.data_voxel_num, self.classifying_rule, self.ligand_pocket_definer, self.ligand_voxel_num, self.pdb_name, water_id)
+
+    def _get_save_path_non_dis(self, water_id):
+        return get_training_data_path('gr', 'non_displaceable', self.data_voxel_num, self.classifying_rule, self.ligand_pocket_definer, self.ligand_voxel_num, self.pdb_name, water_id)
 
     def _get_base_voxel_data(self):
         
@@ -29,7 +31,7 @@ class TrainingDataCreatorGr(TrainingDataCreator):
     
     def _get_training_data(self):
 
-        displaceable_water_coords, non_displaceable_water_coords = self._get_taregt_water_molecules()
+        displaceable_water_coords, non_displaceable_water_coords = self._get_taregt_water_coords()
         gr_voxel = self._get_base_voxel_data()
         training_data_displaceable = self.__extract_training_voxel_data(displaceable_water_coords, gr_voxel)
         training_data_non_displaceable = self.__extract_training_voxel_data(non_displaceable_water_coords, gr_voxel)

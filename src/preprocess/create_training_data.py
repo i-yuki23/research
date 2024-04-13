@@ -6,7 +6,7 @@ from Class.TrainingDataCreator.TrainingDataCreatorGist import TrainingDataCreato
 
 
 LIGNAD_POCKET_VOXEL_NUM = 8
-CLASSIFYING_RULE = "WaterClassifyingRuleSurface"
+CLASSIFYING_RULE = "WaterClassifyingRuleCenter"
 LIGAND_POCKET_DEFINER = "LigandPocketDefinerOriginal"
 DATA_VOXEL_NUM = 10
 
@@ -14,7 +14,6 @@ def main():
     pdb_names = get_all_pdb_names()
 
     for pdb_name in pdb_names:
-        # pdb_name = '3kr4'
         print(pdb_name)
 
         try:
