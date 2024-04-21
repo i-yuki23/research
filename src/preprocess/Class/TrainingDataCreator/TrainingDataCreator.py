@@ -42,6 +42,7 @@ class TrainingDataCreator:
     def _get_training_data(self) -> Tuple[np.ndarray, np.ndarray]:
         raise NotImplementedError("This method must be implemented in subclass")
 
+    # save training for each water molecule and name it with its water_id
     def save_training_data(self) -> None:
 
         training_data_displaceable, training_data_non_displaceable = self._get_training_data()
@@ -50,12 +51,12 @@ class TrainingDataCreator:
         for index, one_training_data_displaceable in enumerate(training_data_displaceable):
             save_path_dis = self._get_save_path_dis(displaceable_water_ids[index])
             make_dir(save_path_dis)
-            np.save(save_path_dis, one_training_data_displaceable)
+            np.save(save_path_dis, one_training_data_displaceable[np.newaxis, :, :, :])
     
         for index, one_training_data_non_displaceable in enumerate(training_data_non_displaceable):
             save_path_non_dis = self._get_save_path_non_dis(non_displaceable_water_ids[index])
             make_dir(save_path_non_dis)
-            np.save(save_path_non_dis, one_training_data_non_displaceable)
+            np.save(save_path_non_dis, one_training_data_non_displaceable[np.newaxis, :, :, :])
 
 
 

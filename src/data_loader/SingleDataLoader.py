@@ -9,22 +9,22 @@ class SingleDataLoader(DataLoader):
     def __init__(self, training_data_dir):
         super().__init__(training_data_dir)
 
-    def __get_all_ndarray(self, pdb_list, training_data_dir):
+    def __get_all_ndarray(self, pdb_list, training_data_path):
         all_data = []
         for pdb_name in pdb_list:
             try:
-                data = self._get_ndarray(pdb_name, training_data_dir)
+                data = self.get_ndarray(pdb_name, training_data_path)
                 all_data.append(data)
             except Exception as e:
                 print(f"Error processing {pdb_name}: {e}")
         all_data_array = np.concatenate(all_data, axis=0)
         return all_data_array
 
-    def _get_data(self, pdb_list, training_data_dir):
-        displaceable_data = self.__get_all_ndarray(pdb_list, os.path.join(training_data_dir, 'displaceable/'))
+    def _get_data(self, pdb_list):
+        displaceable_data = self.__get_all_ndarray(pdb_list, os.path.join(self.training_data_dir, 'displaceable/'))
         displaceable_labels = np.ones(len(displaceable_data))
 
-        non_displaceable_data = self.__get_all_ndarray(pdb_list, os.path.join(training_data_dir, 'non_displaceable/'))
+        non_displaceable_data = self.__get_all_ndarray(pdb_list, os.path.join(self.training_data_dir, 'non_displaceable/'))
         non_displaceable_labels = np.zeros(len(non_displaceable_data))
 
         all_data = np.concatenate([displaceable_data, non_displaceable_data], axis=0)

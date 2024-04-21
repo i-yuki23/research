@@ -42,3 +42,16 @@ def make_dir(save_file_path):
     if not os.path.exists(directory):
         # ディレクトリが存在しない場合、ディレクトリを作成（親ディレクトリも含めて）
         os.makedirs(directory, exist_ok=True)
+
+def get_latest_checkpoint(checkpoint_dir):
+    # List all files in the directory
+    checkpoint_files = os.listdir(checkpoint_dir)
+
+    # Filter and sort the checkpoint files based on the numbering
+    checkpoint_files = [f for f in checkpoint_files if f.startswith('cp-') and f.endswith('.weights.h5')]
+    checkpoint_files.sort(key=lambda x: int(x.split('-')[1].split('.')[0]))
+
+    # Get the latest checkpoint file
+    latest_checkpoint = checkpoint_files[-1] if checkpoint_files else None
+
+    return os.path.join(checkpoint_dir, latest_checkpoint)

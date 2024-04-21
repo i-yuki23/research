@@ -15,8 +15,8 @@ class DoubleDataLoader(DataLoader):
         non_displaceable_data2_list = []
         for pdb_name in pdb_list:
             try:
-                displaceable_data1 = self._get_ndarray(pdb_name, os.path.join(training_data_dir1, 'displaceable/'))
-                displaceable_data2 = self._get_ndarray(pdb_name, os.path.join(training_data_dir2, 'displaceable/'))
+                displaceable_data1 = self.get_ndarray(pdb_name, os.path.join(training_data_dir1, 'displaceable/'))
+                displaceable_data2 = self.get_ndarray(pdb_name, os.path.join(training_data_dir2, 'displaceable/'))
                 # Only when the both data are not empty, add them to the list
                 displaceable_data1_list.append(displaceable_data1)
                 displaceable_data2_list.append(displaceable_data2)
@@ -24,8 +24,8 @@ class DoubleDataLoader(DataLoader):
                 print(f"Error processing {pdb_name}: {e}")
             
             try:
-                non_displaceable_data1 = self._get_ndarray(pdb_name, os.path.join(training_data_dir1, 'non_displaceable/'))
-                non_displaceable_data2 = self._get_ndarray(pdb_name, os.path.join(training_data_dir2, 'non_displaceable/'))
+                non_displaceable_data1 = self.get_ndarray(pdb_name, os.path.join(training_data_dir1, 'non_displaceable/'))
+                non_displaceable_data2 = self.get_ndarray(pdb_name, os.path.join(training_data_dir2, 'non_displaceable/'))
                 non_displaceable_data1_list.append(non_displaceable_data1)
                 non_displaceable_data2_list.append(non_displaceable_data2)
             except (ValueError, FileNotFoundError) as e:
