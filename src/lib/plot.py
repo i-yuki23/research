@@ -14,7 +14,7 @@ def plot_histogram(data, data2, title):
     # Show histogram
     plt.show()
 
-def plot_learning_curve(hist):
+def plot_learning_curve(hist, title_fontsize=18, fontsize=14):
     for key in [k for k in hist.keys() if not k.startswith('val_')]:
         plt.figure()  # 新しい図を作成
         # トレーニングデータのプロット
@@ -22,8 +22,10 @@ def plot_learning_curve(hist):
         # バリデーションデータのプロット
         val_key = f'val_{key}'
         plt.plot(hist[val_key], label=f'Validation {key}')
-        plt.title(f'Training and Validation {key.capitalize()}')
-        plt.xlabel('Epochs')
-        plt.ylabel(key.capitalize())
-        plt.legend()
+        plt.title(f'Training and Validation {key.capitalize()}', fontsize=title_fontsize)
+        plt.xlabel('Epochs',  fontsize=title_fontsize)
+        plt.ylabel(key.capitalize(),  fontsize=title_fontsize)
+        plt.xticks(fontsize=fontsize)  
+        plt.yticks(fontsize=fontsize) 
+        plt.legend(fontsize=fontsize)
         plt.show()

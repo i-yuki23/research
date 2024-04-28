@@ -36,5 +36,5 @@ class SingleDataLoader(DataLoader):
     def load_data(self, pdb_list_path):
         with open(pdb_list_path, 'r') as f:
             pdb_list = f.read().splitlines()
-            data, labels = self._get_data(pdb_list, self.training_data_dir)
+            data, labels = self._get_data(pdb_list)
         return data, labels
