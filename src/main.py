@@ -44,9 +44,9 @@ print('Val labels shape: ', val_labels.shape)
 
 input_shape = (DATA_VOXEL_NUM*2+1, DATA_VOXEL_NUM*2+1, DATA_VOXEL_NUM*2+1, 1)
 epochs = 300
-batch_size = 64
+batch_size = 128
 n_base = 16
-learning_rate = 1e-5
+learning_rate = 1e-4
 early_stopping = 300
 BN = True
 dropout = 0.5

@@ -26,11 +26,12 @@ def get_water0_pdb(pdb_names):
     return water_0_pdb
 
 pdb_names = get_all_pdb_names()
-water_0_pdb = get_water0_pdb(pdb_names)
+# water_0_pdb = get_water0_pdb(pdb_names)
 
 exsheet = pd.ExcelFile('clusterNum.xlsx')
 exsheet_df = exsheet.parse(exsheet.sheet_names[0])
-filtered_exsheet_df = exsheet_df[~exsheet_df['PDB'].isin(water_0_pdb)]
+# filtered_exsheet_df = exsheet_df[~exsheet_df['PDB'].isin(water_0_pdb)]
+filtered_exsheet_df = exsheet_df
 exsheet_array = filtered_exsheet_df.values
 
 cluster_num = filtered_exsheet_df["Cluster Num"][:]
@@ -56,7 +57,7 @@ for cluster_index in sorted_clusters:
     proteins_count_b = sum(proteins_b)
 
     # グループAとBの条件を満たす場合にクラスターを追加
-    if (count_a < count_b or 6.0 * proteins_count_a < 7.0 * proteins_count_b) and count_a * 6 < int(len(cluster_protein_counts)*7):
+    if (count_a < count_b or 3.0 * proteins_count_a < 7.0 * proteins_count_b) and count_a * 3 < int(len(cluster_protein_counts)*7):
         clusters_a.append(cluster_index)
         proteins_a.append(cluster_protein_counts[cluster_index])
     else:

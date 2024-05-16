@@ -1,6 +1,7 @@
 from scipy.spatial import cKDTree
 import numpy as np
 import os
+import glob
 
 def extract_points_within_threshold(coords1, coords2, threshold):
     """閾値以内にあるポケットの点を抽出する
@@ -55,3 +56,10 @@ def get_latest_checkpoint(checkpoint_dir):
     latest_checkpoint = checkpoint_files[-1] if checkpoint_files else None
 
     return os.path.join(checkpoint_dir, latest_checkpoint)
+
+def remove_all_checkpoints(checkpoint_dir):
+    # List all files in the directory
+    files = glob.glob(os.path.join(checkpoint_dir, '*'))
+
+    for file in files:
+        os.remove(file)

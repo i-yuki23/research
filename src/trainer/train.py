@@ -1,6 +1,8 @@
 from keras.optimizers import Adam
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 from custom_losses.dice import dice_coefficient
+from lib.helper import remove_all_checkpoints
+import os
 
 
 
@@ -18,11 +20,12 @@ def train_func(x_train, y_train, x_val, y_val, x_test, y_test, input_shape, mode
     # to save only the best model
 
     if model_checkpoint:
+        remove_all_checkpoints(os.path.dirname(checkpoint_path))
         model_checkpoint_callback = ModelCheckpoint(
         filepath=checkpoint_path,
         save_weights_only=True,
-        monitor='val_loss',
-        mode='min',
+        monitor='val_accuracy',
+        mode='max',
         save_best_only=True)
         callbacks_list.append(model_checkpoint_callback)
         
