@@ -53,12 +53,12 @@ class TrainingDataCreator:
         for index, one_training_data_displaceable in enumerate(training_data_displaceable):
             save_path_dis = self._get_save_path_dis(displaceable_water_ids[index])
             make_dir(save_path_dis)
-            np.save(save_path_dis, one_training_data_displaceable[np.newaxis, :, :, :])
+            np.save(save_path_dis, one_training_data_displaceable[:, :, :, :])
     
         for index, one_training_data_non_displaceable in enumerate(training_data_non_displaceable):
             save_path_non_dis = self._get_save_path_non_dis(non_displaceable_water_ids[index])
             make_dir(save_path_non_dis)
-            np.save(save_path_non_dis, one_training_data_non_displaceable[np.newaxis, :, :, :])
+            np.save(save_path_non_dis, one_training_data_non_displaceable[:, :, :, :])
 
 
 
