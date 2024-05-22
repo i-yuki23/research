@@ -18,11 +18,14 @@ class DataLoader:
         data_list = []
         for data_name in data_path_list:
             loaded_data = np.load(data_name)
+            # print(loaded_data.shape)
             if loaded_data.size == 0:
                 # print(f"This is empty data: {pdb_name}")
                 raise ValueError(f"This is empty data: {pdb_name}")
-            loaded_data_reshaped = loaded_data[:, :, :, :, np.newaxis]
+            loaded_data_reshaped = loaded_data[np.newaxis, :, :, :, :]
+            # print(loaded_data_reshaped.shape)
             data_list.append(loaded_data_reshaped)
+        print(len(data_list))
         data_np = np.concatenate(data_list, axis=0)
         return data_np
     
@@ -37,7 +40,7 @@ class DataLoader:
             loaded_data = np.load(data_name)
             if loaded_data.size == 0:
                 raise ValueError(f"This is empty data: {pdb_name}")
-            loaded_data_reshaped = loaded_data[:, :, :, :, np.newaxis]
+            loaded_data_reshaped = loaded_data[np.newaxis, :, :, :, :]
             data_list.append(loaded_data_reshaped)
 
             file_name = os.path.basename(data_name)

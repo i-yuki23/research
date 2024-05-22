@@ -25,7 +25,7 @@ class TrainingDataCreatorGr(TrainingDataCreator):
         training_voxel_data_list = []
         for water_coordinate in water_coordinates:
             training_voxel_data = fetch_neighboring_voxel(water_coordinate, base_voxel, self.grid_origin, self.grid_dims, self.data_voxel_num)
-            training_voxel_data_list.append(training_voxel_data[np.newaxis, :, :, :])
+            training_voxel_data_list.append(training_voxel_data[:, :, :, np.newaxis])
         training_voxel_data_array = np.array(training_voxel_data_list)
         return training_voxel_data_array
     

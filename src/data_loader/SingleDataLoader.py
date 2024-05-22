@@ -3,6 +3,7 @@ import glob
 import os
 from data_loader.DataLoader import DataLoader
 from lib.path import get_training_data_dir
+import tensorflow as tf
 
 class SingleDataLoader(DataLoader):
 
@@ -37,4 +38,5 @@ class SingleDataLoader(DataLoader):
         with open(pdb_list_path, 'r') as f:
             pdb_list = f.read().splitlines()
             data, labels = self._get_data(pdb_list)
-        return data, labels
+            data_reshaped = tf.transpose(data, [0, 2, 3, 4, 1])
+        return data_reshaped, labels

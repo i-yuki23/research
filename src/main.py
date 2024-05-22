@@ -4,6 +4,7 @@ from data_loader.SingleDataLoader import SingleDataLoader
 from data_loader.DoubleDataLoader import DoubleDataLoader
 from models.LeNet import LeNet
 from models.AlexNet import Alexnet
+from models.ResNet import ResNet
 from trainer.train import train_func
 from lib.path import get_training_data_dir
 from custom_losses.dice import dice_loss, dice_coefficient
@@ -16,16 +17,14 @@ test_list = os.path.join(data_dir, 'test_list')
 val_list = os.path.join(data_dir, 'val_list')
 
 DATA_TYPE1 = 'gr'
-DATA_TYPE2 = 'gist'
+# DATA_TYPE2 = 'Protein'
 DATA_VOXEL_NUM = 10
 CLASSIFYING_RULE = 'WaterClassifyingRuleSurface'
 LIGAND_POCKET_DEFINER = 'LigandPocketDefinerOriginal'
 LIGAND_VOXEL_NUM = 8
 
 training_data_dir1 = get_training_data_dir(DATA_TYPE1, DATA_VOXEL_NUM, CLASSIFYING_RULE, LIGAND_POCKET_DEFINER, LIGAND_VOXEL_NUM)
-training_data_dir2 = get_training_data_dir(DATA_TYPE2, DATA_VOXEL_NUM, CLASSIFYING_RULE, LIGAND_POCKET_DEFINER, LIGAND_VOXEL_NUM)
-
-print(training_data_dir1, "\n", training_data_dir2)
+# training_data_dir2 = get_training_data_dir(DATA_TYPE2, DATA_VOXEL_NUM, CLASSIFYING_RULE, LIGAND_POCKET_DEFINER, LIGAND_VOXEL_NUM)
 
 data_loader = SingleDataLoader(training_data_dir1)
 
@@ -42,20 +41,23 @@ print('Test labels shape: ', test_labels.shape)
 print('Val data shape: ', val_data.shape)
 print('Val labels shape: ', val_labels.shape)
 
-input_shape = (DATA_VOXEL_NUM*2+1, DATA_VOXEL_NUM*2+1, DATA_VOXEL_NUM*2+1, 1)
-epochs = 300
+input_shape = (DATA_VOXEL_NUM*2+1, DATA_VOXEL_NUM*2+1, DATA_VOXEL_NUM*2+1, train_data.shape[-1])
+epochs = 30
 batch_size = 128
-n_base = 16
+n_base = 8
 learning_rate = 1e-4
-early_stopping = 300
+early_stopping = 30
 BN = True
 dropout = 0.5
-model_func = LeNet
+model_func = ResNet
+MODEL_NAME = model_func.__name__
 losses = [BinaryCrossentropy(), dice_loss]
 loss= losses[0]
 metrics = ['accuracy', dice_coefficient, Recall(), Precision()]
-path_type = '/'.join(training_data_dir1.split('/')[6:11])
-checkpoint_path = f"./checkpoints/{path_type}/LeNet/" + "cp-{epoch:04d}.weights.h5"
+path_type = f'/{DATA_TYPE1}/data_voxel_num_{DATA_VOXEL_NUM}/{LIGAND_POCKET_DEFINER}/ligand_pocket_voxel_num_{LIGAND_VOXEL_NUM}/{CLASSIFYING_RULE}/{MODEL_NAME}/'
+# path_type = f'/{DATA_TYPE1}_{DATA_TYPE2}/data_voxel_num_{DATA_VOXEL_NUM}/{LIGAND_POCKET_DEFINER}/ligand_pocket_voxel_num_{LIGAND_VOXEL_NUM}/{CLASSIFYING_RULE}/{MODEL_NAME}/'
+
+checkpoint_path = f"./checkpoints/{path_type}/" + "cp-{epoch:04d}.weights.h5"
 model_checkpoint = True
 
 # pos = train_labels.sum()
@@ -90,7 +92,7 @@ clf, clf_hist, clf_eval = train_func(
 
 from lib.helper import make_dir
 
-history_save_path = f"./history/{path_type}/LeNet/training_history.json"
+history_save_path = f"./history/{path_type}/training_history.json"
 make_dir(history_save_path)
 with open(history_save_path, 'w') as f:
     json.dump(clf_hist.history, f)

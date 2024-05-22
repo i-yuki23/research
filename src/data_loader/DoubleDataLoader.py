@@ -1,6 +1,7 @@
 import numpy as np
 import os
 from data_loader.DataLoader import DataLoader
+import tensorflow as tf
 
 class DoubleDataLoader(DataLoader):
 
@@ -18,6 +19,7 @@ class DoubleDataLoader(DataLoader):
                 displaceable_data1 = self.get_ndarray(pdb_name, os.path.join(training_data_dir1, 'displaceable/'))
                 displaceable_data2 = self.get_ndarray(pdb_name, os.path.join(training_data_dir2, 'displaceable/'))
                 # Only when the both data are not empty, add them to the list
+                # print(displaceable_data1.shape)
                 displaceable_data1_list.append(displaceable_data1)
                 displaceable_data2_list.append(displaceable_data2)
             except (ValueError, FileNotFoundError) as e:
@@ -30,8 +32,12 @@ class DoubleDataLoader(DataLoader):
                 non_displaceable_data2_list.append(non_displaceable_data2)
             except (ValueError, FileNotFoundError) as e:
                 print(f"Error processing {pdb_name}: {e}")
-        print(len(displaceable_data1_list))
-        print(len(displaceable_data2_list))   
+        # print(len(displaceable_data1_list))
+        # print(len(displaceable_data2_list))   
+        # print(displaceable_data2_list[0].shape)
+        # print(displaceable_data2_list[1].shape)
+
+        # Concatenate data along the data num axis
         displaceable_data1_array = np.concatenate(displaceable_data1_list, axis=0)
         displaceable_data2_array = np.concatenate(displaceable_data2_list, axis=0)
         non_displaceable_data1_array = np.concatenate(non_displaceable_data1_list, axis=0)
@@ -39,8 +45,10 @@ class DoubleDataLoader(DataLoader):
         displaceable_labels = np.ones(len(displaceable_data1_array))
         non_displaceable_labels = np.zeros(len(non_displaceable_data1_array))  
 
-        displaceable_conbined_data = np.concatenate([displaceable_data1_array, displaceable_data2_array], axis=-1)
-        non_displaceable_conbined_data = np.concatenate([non_displaceable_data1_array, non_displaceable_data2_array], axis=-1)
+        # Concatenate data along the channel axis
+        # print(displaceable_data1_array.shape, displaceable_data2_array.shape)
+        displaceable_conbined_data = np.concatenate([displaceable_data1_array, displaceable_data2_array], axis=1)
+        non_displaceable_conbined_data = np.concatenate([non_displaceable_data1_array, non_displaceable_data2_array], axis=1)
 
         all_data = np.concatenate([displaceable_conbined_data, non_displaceable_conbined_data], axis=0)
         all_labels = np.concatenate([displaceable_labels, non_displaceable_labels], axis=0)
@@ -52,4 +60,5 @@ class DoubleDataLoader(DataLoader):
         with open(pdb_list_path, 'r') as f:
             pdb_list = f.read().splitlines()
             data, labels = self._get_data(pdb_list, self.training_data_dir1, self.training_data_dir2)
-        return data, labels
+            data_reshaped = tf.transpose(data, [0, 2, 3, 4, 1])
+        return data_reshaped, labels
