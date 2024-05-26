@@ -5,6 +5,7 @@ from lib.path import get_training_data_dir, get_predicted_labeled_water_path, ge
 from lib.pdb import filter_atoms_and_create_new_pdb
 from data_loader.DataLoader import DataLoader
 from models.LeNet import LeNet
+from models.ResNet import ResNet
 from lib.helper import get_latest_checkpoint
 from tensorflow.keras.losses import BinaryCrossentropy
 from custom_losses.dice import dice_loss, dice_coefficient
@@ -13,20 +14,21 @@ import numpy as np
 
 # Define the parameters
 pdb_name = '4lkk'
-DATA_TYPE = 'gr'
+DATA_TYPE = 'gr_Protein'
 DATA_VOXEL_NUM = 10
 CLASSIFYING_RULE = 'WaterClassifyingRuleSurface'
 LIGAND_POCKET_DEFINER = 'LigandPocketDefinerOriginal'
 LIGAND_VOXEL_NUM = 8
-MODEL_NAME = 'LeNet'
-input_shape = (DATA_VOXEL_NUM*2+1, DATA_VOXEL_NUM*2+1, DATA_VOXEL_NUM*2+1, 1)
-n_base = 16
-learning_rate = 1e-5
+model_func = ResNet
+MODEL_NAME = model_func.__name__
+input_shape = (DATA_VOXEL_NUM*2+1, DATA_VOXEL_NUM*2+1, DATA_VOXEL_NUM*2+1, 6)
+n_base = 8
+learning_rate = 1e-4
 metrics = ['accuracy', dice_coefficient, Recall(), Precision()]
 BN = True
 
 # Load the test data
-training_data_dir = get_training_data_dir(DATA_TYPE, DATA_VOXEL_NUM, CLASSIFYING_RULE, LIGAND_POCKET_DEFINER, LIGAND_VOXEL_NUM)
+training_data_dir = get_training_data_dir('gr', DATA_VOXEL_NUM, CLASSIFYING_RULE, LIGAND_POCKET_DEFINER, LIGAND_VOXEL_NUM)
 data_loader = DataLoader(training_data_dir)
 test_data_displaceable, dis_water_ids = data_loader.get_test_data_and_water_ids(pdb_name, os.path.join(training_data_dir, 'displaceable/'))
 test_data_non_displaceable, non_dis_water_ids = data_loader.get_test_data_and_water_ids(pdb_name, os.path.join(training_data_dir, 'non_displaceable/'))
@@ -34,7 +36,7 @@ test_data_non_displaceable, non_dis_water_ids = data_loader.get_test_data_and_wa
 # Load the model and its weights
 checkpoint_dir = f'../checkpoints/{DATA_TYPE}/data_voxel_num_{DATA_VOXEL_NUM}/{LIGAND_POCKET_DEFINER}/ligand_pocket_voxel_num_{LIGAND_VOXEL_NUM}/{CLASSIFYING_RULE}/{MODEL_NAME}/'
 latest_checkpoint = get_latest_checkpoint(checkpoint_dir)
-model = LeNet(n_base, input_shape, learning_rate, BinaryCrossentropy(), metrics, BN=BN)
+model = model_func(n_base, input_shape, learning_rate, BinaryCrossentropy(), metrics, BN=BN)
 model.load_weights(latest_checkpoint)
 
 # Predict the labels

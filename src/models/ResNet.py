@@ -2,7 +2,9 @@ from tensorflow.keras.layers import Add, Input
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Dense, Flatten, Dense, Activation, MaxPooling3D, Conv3D, Dropout, GlobalAveragePooling3D
 from tensorflow.keras.layers import BatchNormalization,SpatialDropout3D
-from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.optimizers import AdamW
+import tensorflow as tf
+
 
 # Define the kernel size as a constant
 KERNEL_SIZE = (3, 3, 3)
@@ -11,7 +13,7 @@ def resnet_block(input_tensor, n_base, strides=1, BN=False):
     x = Conv3D(n_base, kernel_size=KERNEL_SIZE, strides=strides, padding='same')(input_tensor)
     if BN:
         x = BatchNormalization()(x)
-    x = Activation('relu')(x)
+    x = Activation(tf.nn.gelu)(x)
 
     x = Conv3D(n_base, kernel_size=KERNEL_SIZE, strides=1, padding='same')(x)
     if BN:
@@ -24,7 +26,7 @@ def resnet_block(input_tensor, n_base, strides=1, BN=False):
             shortcut = BatchNormalization()(shortcut)
 
     x = Add()([x, shortcut])
-    x = Activation('relu')(x)
+    x = Activation(tf.nn.gelu)(x)
     return x
 
 
@@ -58,7 +60,7 @@ def ResNet(n_base, input_shape, learning_rate, loss, metrics, class_num=1, dropo
     
     model = Model(inputs, outputs)
     
-    optimizer = Adam(learning_rate=learning_rate)
+    optimizer = AdamW(learning_rate=learning_rate)
     model.compile(loss=loss,
                   optimizer=optimizer,
                   metrics=metrics)

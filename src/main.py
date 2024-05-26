@@ -6,6 +6,7 @@ from models.LeNet import LeNet
 from models.AlexNet import Alexnet
 from models.ResNet import ResNet
 from trainer.train import train_func
+from trainer.aug_train import aug_train_func
 from lib.path import get_training_data_dir
 from custom_losses.dice import dice_loss, dice_coefficient
 from tensorflow.keras.metrics import Recall, Precision
@@ -42,53 +43,70 @@ print('Val data shape: ', val_data.shape)
 print('Val labels shape: ', val_labels.shape)
 
 input_shape = (DATA_VOXEL_NUM*2+1, DATA_VOXEL_NUM*2+1, DATA_VOXEL_NUM*2+1, train_data.shape[-1])
-epochs = 30
+epochs = 300
 batch_size = 128
 n_base = 8
 learning_rate = 1e-4
-early_stopping = 30
+early_stopping = 80
 BN = True
 dropout = 0.5
 model_func = ResNet
 MODEL_NAME = model_func.__name__
+TRAINER_NAME = 'aug_train'
 losses = [BinaryCrossentropy(), dice_loss]
 loss= losses[0]
 metrics = ['accuracy', dice_coefficient, Recall(), Precision()]
-path_type = f'/{DATA_TYPE1}/data_voxel_num_{DATA_VOXEL_NUM}/{LIGAND_POCKET_DEFINER}/ligand_pocket_voxel_num_{LIGAND_VOXEL_NUM}/{CLASSIFYING_RULE}/{MODEL_NAME}/'
-# path_type = f'/{DATA_TYPE1}_{DATA_TYPE2}/data_voxel_num_{DATA_VOXEL_NUM}/{LIGAND_POCKET_DEFINER}/ligand_pocket_voxel_num_{LIGAND_VOXEL_NUM}/{CLASSIFYING_RULE}/{MODEL_NAME}/'
+path_type = f'/{DATA_TYPE1}/data_voxel_num_{DATA_VOXEL_NUM}/{LIGAND_POCKET_DEFINER}/ligand_pocket_voxel_num_{LIGAND_VOXEL_NUM}/{CLASSIFYING_RULE}/{MODEL_NAME}/{TRAINER_NAME}/'
+# path_type = f'/{DATA_TYPE1}_{DATA_TYPE2}/data_voxel_num_{DATA_VOXEL_NUM}/{LIGAND_POCKET_DEFINER}/ligand_pocket_voxel_num_{LIGAND_VOXEL_NUM}/{CLASSIFYING_RULE}/{MODEL_NAME}_gelu/'
 
 checkpoint_path = f"./checkpoints/{path_type}/" + "cp-{epoch:04d}.weights.h5"
 model_checkpoint = True
 
-# pos = train_labels.sum()
-# neg = train_labels.shape[0] - pos
-# total = train_labels.shape[0]
 
-# weight_for_0 = (1 / neg) * (total / 2.0)
-# weight_for_1 = (1 / pos) * (total / 2.0)
-# class_weight = {0: weight_for_0, 1: weight_for_1}
+# clf, clf_hist, clf_eval = train_func(
+#                                     x_train=train_data,
+#                                     y_train=train_labels,
+#                                     x_test=test_data,
+#                                     y_test=test_labels,
+#                                     x_val=val_data,
+#                                     y_val=val_labels,
+#                                     input_shape=input_shape,
+#                                     model_func=model_func,
+#                                     loss=loss,
+#                                     metrics=metrics,
+#                                     epochs=epochs,
+#                                     batch_size=batch_size,
+#                                     n_base=n_base,
+#                                     learning_rate=learning_rate,
+#                                     early_stopping=early_stopping,
+#                                     checkpoint_path=checkpoint_path,
+#                                     model_checkpoint=model_checkpoint,
+#                                     BN = BN,
+#                                     dropout=dropout
+#                                 )
 
-clf, clf_hist, clf_eval = train_func(
-                                    x_train=train_data,
-                                    y_train=train_labels,
-                                    x_test=test_data,
-                                    y_test=test_labels,
-                                    x_val=val_data,
-                                    y_val=val_labels,
-                                    input_shape=input_shape,
-                                    model_func=model_func,
-                                    loss=loss,
-                                    metrics=metrics,
-                                    epochs=epochs,
-                                    batch_size=batch_size,
-                                    n_base=n_base,
-                                    learning_rate=learning_rate,
-                                    early_stopping=early_stopping,
-                                    checkpoint_path=checkpoint_path,
-                                    model_checkpoint=model_checkpoint,
-                                    BN = BN,
-                                    dropout=dropout
-                                )
+
+clf, clf_hist = aug_train_func(
+                                x_train=train_data,
+                                y_train=train_labels,
+                                x_val=val_data,
+                                y_val=val_labels,
+                                input_shape=input_shape,
+                                model_func=model_func,
+                                loss=loss,
+                                metrics=metrics,
+                                epochs=epochs,
+                                batch_size=batch_size,
+                                num_rotations=3,
+                                angle_unit=45,
+                                n_base=n_base,
+                                learning_rate=learning_rate,
+                                early_stopping=early_stopping,
+                                checkpoint_path=checkpoint_path,
+                                model_checkpoint=model_checkpoint,
+                                BN = BN,
+                                dropout=dropout
+                            )
 
 from lib.helper import make_dir
 
