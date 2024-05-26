@@ -1,29 +1,40 @@
-# %%
 import os
-from data_load import load_data
+import json
+from data_loader.SingleDataLoader import SingleDataLoader
+from data_loader.DoubleDataLoader import DoubleDataLoader
 from models.LeNet import LeNet
 from models.AlexNet import Alexnet
+from models.ResNet import ResNet
 from trainer.train import train_func
+from trainer.aug_train import aug_train_func
+from lib.path import get_training_data_dir
 from custom_losses.dice import dice_loss, dice_coefficient
 from tensorflow.keras.metrics import Recall, Precision
-from tensorflow.keras.losses import BinaryFocalCrossentropy
+from tensorflow.keras.losses import BinaryFocalCrossentropy, BinaryCrossentropy
 
-# %%
 data_dir = '../data'
 train_list = os.path.join(data_dir, 'train_list')
 test_list = os.path.join(data_dir, 'test_list')
 val_list = os.path.join(data_dir, 'val_list')
 
-# %%
-GR_VOXEL_NUM = 10
-LIGAND_VOXEL_NUM = 6
+DATA_TYPE1 = 'gr'
+# DATA_TYPE2 = 'Protein'
+DATA_VOXEL_NUM = 10
+CLASSIFYING_RULE = 'WaterClassifyingRuleSurface'
+LIGAND_POCKET_DEFINER = 'LigandPocketDefinerOriginal'
+LIGAND_VOXEL_NUM = 8
 
-# %%
-train_data, train_labels = load_data(train_list, LIGAND_VOXEL_NUM, GR_VOXEL_NUM)
-test_data, test_labels = load_data(test_list, LIGAND_VOXEL_NUM, GR_VOXEL_NUM)
-val_data, val_labels = load_data(val_list, LIGAND_VOXEL_NUM, GR_VOXEL_NUM)
+training_data_dir1 = get_training_data_dir(DATA_TYPE1, DATA_VOXEL_NUM, CLASSIFYING_RULE, LIGAND_POCKET_DEFINER, LIGAND_VOXEL_NUM)
+# training_data_dir2 = get_training_data_dir(DATA_TYPE2, DATA_VOXEL_NUM, CLASSIFYING_RULE, LIGAND_POCKET_DEFINER, LIGAND_VOXEL_NUM)
 
-# %%
+data_loader = SingleDataLoader(training_data_dir1)
+
+# data_loader = DoubleDataLoader(training_data_dir1, training_data_dir2)
+
+train_data, train_labels = data_loader.load_data(train_list)
+test_data, test_labels = data_loader.load_data(test_list)
+val_data, val_labels = data_loader.load_data(val_list)
+
 print('Train data shape: ', train_data.shape)
 print('Train labels shape: ', train_labels.shape)
 print('Test data shape: ', test_data.shape)
@@ -31,72 +42,81 @@ print('Test labels shape: ', test_labels.shape)
 print('Val data shape: ', val_data.shape)
 print('Val labels shape: ', val_labels.shape)
 
-# %%
-input_shape = (GR_VOXEL_NUM*2+1, GR_VOXEL_NUM*2+1, GR_VOXEL_NUM*2+1, 1)
+input_shape = (DATA_VOXEL_NUM*2+1, DATA_VOXEL_NUM*2+1, DATA_VOXEL_NUM*2+1, train_data.shape[-1])
 epochs = 300
-batch_size = 32
-n_base = 32
-learning_rate = 1e-5
-early_stopping = 300
+batch_size = 128
+n_base = 8
+learning_rate = 1e-4
+early_stopping = 80
 BN = True
-dropout = 0.4
-model_func = LeNet
-loss= dice_loss
+dropout = 0.5
+model_func = ResNet
+MODEL_NAME = model_func.__name__
+TRAINER_NAME = 'aug_train'
+losses = [BinaryCrossentropy(), dice_loss]
+loss= losses[0]
 metrics = ['accuracy', dice_coefficient, Recall(), Precision()]
-checkpoint_dir = f"./checkpoints/LIGAND_VOXEL_NUM_{LIGAND_VOXEL_NUM}/GR_VOXEL_NUM_{GR_VOXEL_NUM}/LeNet/"
-checkpoint_path  = os.path.join(checkpoint_dir, "cp-{epoch:04d}.weights.h5")
+path_type = f'/{DATA_TYPE1}/data_voxel_num_{DATA_VOXEL_NUM}/{LIGAND_POCKET_DEFINER}/ligand_pocket_voxel_num_{LIGAND_VOXEL_NUM}/{CLASSIFYING_RULE}/{MODEL_NAME}/{TRAINER_NAME}/'
+# path_type = f'/{DATA_TYPE1}_{DATA_TYPE2}/data_voxel_num_{DATA_VOXEL_NUM}/{LIGAND_POCKET_DEFINER}/ligand_pocket_voxel_num_{LIGAND_VOXEL_NUM}/{CLASSIFYING_RULE}/{MODEL_NAME}_gelu/'
+
+checkpoint_path = f"./checkpoints/{path_type}/" + "cp-{epoch:04d}.weights.h5"
 model_checkpoint = True
 
-# %%
-pos = train_labels.sum()
-neg = train_labels.shape[0] - pos
-total = train_labels.shape[0]
 
-weight_for_0 = (1 / neg) * (total / 2.0)
-weight_for_1 = (1 / pos) * (total / 2.0)
-class_weight = {0: weight_for_0, 1: weight_for_1}
-print(class_weight)
+# clf, clf_hist, clf_eval = train_func(
+#                                     x_train=train_data,
+#                                     y_train=train_labels,
+#                                     x_test=test_data,
+#                                     y_test=test_labels,
+#                                     x_val=val_data,
+#                                     y_val=val_labels,
+#                                     input_shape=input_shape,
+#                                     model_func=model_func,
+#                                     loss=loss,
+#                                     metrics=metrics,
+#                                     epochs=epochs,
+#                                     batch_size=batch_size,
+#                                     n_base=n_base,
+#                                     learning_rate=learning_rate,
+#                                     early_stopping=early_stopping,
+#                                     checkpoint_path=checkpoint_path,
+#                                     model_checkpoint=model_checkpoint,
+#                                     BN = BN,
+#                                     dropout=dropout
+#                                 )
 
-# %%
-clf, clf_hist, clf_eval = train_func(
-                                    x_train=train_data,
-                                    y_train=train_labels,
-                                    x_test=test_data,
-                                    y_test=test_labels,
-                                    x_val=val_data,
-                                    y_val=val_labels,
-                                    input_shape=input_shape,
-                                    model_func=model_func,
-                                    loss=loss,
-                                    metrics=metrics,
-                                    epochs=epochs,
-                                    batch_size=batch_size,
-                                    n_base=n_base,
-                                    learning_rate=learning_rate,
-                                    early_stopping=early_stopping,
-                                    checkpoint_path=checkpoint_path,
-                                    model_checkpoint=model_checkpoint,
-                                    class_weight=class_weight,
-                                    BN = BN,
-                                    dropout=dropout
-                                )
 
-# %%
-# prediction = clf.predict(test_data)
+clf, clf_hist = aug_train_func(
+                                x_train=train_data,
+                                y_train=train_labels,
+                                x_val=val_data,
+                                y_val=val_labels,
+                                input_shape=input_shape,
+                                model_func=model_func,
+                                loss=loss,
+                                metrics=metrics,
+                                epochs=epochs,
+                                batch_size=batch_size,
+                                num_rotations=3,
+                                angle_unit=45,
+                                n_base=n_base,
+                                learning_rate=learning_rate,
+                                early_stopping=early_stopping,
+                                checkpoint_path=checkpoint_path,
+                                model_checkpoint=model_checkpoint,
+                                BN = BN,
+                                dropout=dropout
+                            )
 
-# # %% [markdown]
-# # 
+from lib.helper import make_dir
 
-# # %%
-# prediction.round().sum()
+history_save_path = f"./history/{path_type}/training_history.json"
+make_dir(history_save_path)
+with open(history_save_path, 'w') as f:
+    json.dump(clf_hist.history, f)
 
-# # %%
-# precision = 0.756
-# recall =0.3592
+prediction = clf.predict(test_data)
 
-# 2*precision*recall/(precision+recall)
-
-# %%
-
+prediction.round().sum()
 
 

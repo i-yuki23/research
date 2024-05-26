@@ -7,3 +7,4 @@ checkpoints/
 *.out
 *#
 src/lib/path.py
+src/history

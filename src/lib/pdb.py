@@ -1,6 +1,7 @@
 import numpy as np
 import os
 from lib.path import get_nas_data_dir
+from lib.helper import make_dir
 
 # Constants for readability
 ATOM_COORD_START = 30
@@ -96,6 +97,7 @@ def get_atom_id_from_pdb(path_to_pdb):
     return np.array(atomic_ids)
 
 def filter_atoms_and_create_new_pdb(input_pdb_path: str, output_pdb_path: str, target_atom_ids: list) -> None:
+    make_dir(output_pdb_path)
     atom_dict = {}
     with open(input_pdb_path, 'r') as f:
         for line in f:
