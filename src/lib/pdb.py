@@ -2,6 +2,7 @@ import numpy as np
 import os
 from lib.path import get_nas_data_dir
 from lib.helper import make_dir
+from collections import defaultdict
 
 # Constants for readability
 ATOM_COORD_START = 30
@@ -151,3 +152,33 @@ def get_clusters_from_pdb(path_to_pdb, type="HETATM"):
                 
     return clusters
 
+def get_atoms_coords_for_each_atom_type(path_to_pdb: str) -> dict:
+    """
+    Extracts coordinates of atoms from a PDB file for each atom type.
+
+    Args:
+        pdb_file (str): Path to a PDB file.
+
+    Returns:
+        dict: key -> element, value -> list of coordinates for corresponding element
+    """
+    if not os.path.exists(path_to_pdb):
+        raise FileNotFoundError(f"{path_to_pdb} does not exist.")
+    
+    atoms_coords_for_each_atom_type = defaultdict(list)
+    with open(path_to_pdb, 'r') as f:
+        for line in f:
+            if line.startswith("TER"):
+                break
+            if line.startswith("ATOM"):
+                coords = get_coords(line)
+                element = line[ATOMIC_SYMBOL_POS]    
+                atoms_coords_for_each_atom_type[element].append(coords)
+            print(line)
+
+
+    # Convert lists to 2D numpy arrays
+    for element in atoms_coords_for_each_atom_type:
+        atoms_coords_for_each_atom_type[element] = np.array(atoms_coords_for_each_atom_type[element])       
+    
+    return atoms_coords_for_each_atom_type

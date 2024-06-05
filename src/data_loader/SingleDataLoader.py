@@ -40,3 +40,27 @@ class SingleDataLoader(DataLoader):
             data, labels = self._get_data(pdb_list)
             data_reshaped = tf.transpose(data, [0, 2, 3, 4, 1])
         return data_reshaped, labels
+    
+    def get_test_data_and_water_ids(self, pdb_name, dis_or_non):
+        test_data_dir = os.path.join(self.training_data_dir, dis_or_non)
+        
+        data_path = os.path.join(test_data_dir, f'{pdb_name}/*.npy')
+        data_path_list = glob.glob(data_path)
+        if len(data_path_list) == 0:
+            raise FileNotFoundError(f'No data found for {pdb_name}')
+        data_list = []
+        water_ids = []
+        for data_name in data_path_list:
+            loaded_data = np.load(data_name)
+            if loaded_data.size == 0:
+                raise ValueError(f"This is empty data: {pdb_name}")
+            loaded_data_reshaped = loaded_data[np.newaxis, :, :, :, :]
+            data_list.append(loaded_data_reshaped)
+
+            file_name = os.path.basename(data_name)
+            water_id = int(file_name.split('_')[2].split('.')[0])
+            water_ids.append(water_id)
+
+        data_np = np.concatenate(data_list, axis=0)
+        data_np_reshaped = tf.transpose(data_np, [0, 2, 3, 4, 1])
+        return data_np_reshaped, np.array(water_ids)
