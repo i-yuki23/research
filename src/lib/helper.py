@@ -30,6 +30,30 @@ def extract_points_within_threshold(coords1, coords2, threshold):
         extracted_points = np.vstack(extracted_points)
     return np.array(extracted_points)
 
+# MODIFY: time complexity is O(M * N), optimize this algorithm
+def calculate_closest_distance(coords1, coords2):
+    """
+    Calculate the shortest distance between any two points in two sets of 3D coordinates.
+    
+    Parameters:
+    coords1 (np.ndarray): A 2D array of shape (N, 3) representing N points in 3D space.
+    coords2 (np.ndarray): A 2D array of shape (M, 3) representing M points in 3D space.
+    
+    Returns:
+    float: The shortest distance between any two points in the two sets.
+    """
+    # Ensure the inputs are numpy arrays
+    coords1 = np.array(coords1)
+    coords2 = np.array(coords2)
+    
+    # Calculate the pairwise distances between all points in coords1 and coords2
+    distances = np.linalg.norm(coords1[:, np.newaxis, :] - coords2[np.newaxis, :, :], axis=2)
+    
+    # Find the minimum distance
+    min_distance = np.min(distances)
+    
+    return min_distance
+
 def make_dir(save_file_path):
     """ファイルを保存するためのディレクトリを作成し、ファイルを保存する
     Parameters
