@@ -2,36 +2,6 @@ from Bio.PDB import PDBParser
 from collections import defaultdict
 import numpy as np
 
-def get_atoms_coords_for_each_atom_type(pdb_file: str) -> dict:
-    """
-
-
-    Args:
-        pdb_file (str): Path to a PDB file.
-
-    Returns:
-        
-    """
-    parser = PDBParser()
-    structure = parser.get_structure('SIA', pdb_file)
-
-    atoms_coords_for_each_atom_type = defaultdict(list)
-    
-    atoms = structure.get_atoms()
-    for atom in atoms:
-        atoms_coords_for_each_atom_type[atom.element].append(atom.coord)
-    
-        # Convert lists to 2D numpy arrays
-    for element in atoms_coords_for_each_atom_type:
-        atoms_coords_for_each_atom_type[element] = np.array(atoms_coords_for_each_atom_type[element])
-
-    
-    return atoms_coords_for_each_atom_type
-
-
-
-
-
 def get_residue_info(pdb_file_path: str) -> np.ndarray:
     """
     Extract residue information from a PDB file. 

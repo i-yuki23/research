@@ -25,7 +25,6 @@ class DataLoader:
             loaded_data_reshaped = loaded_data[np.newaxis, :, :, :, :]
             # print(loaded_data_reshaped.shape)
             data_list.append(loaded_data_reshaped)
-        print(len(data_list))
         data_np = np.concatenate(data_list, axis=0)
         return data_np
     

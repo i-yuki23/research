@@ -9,7 +9,8 @@ ATOM_COORD_START = 30
 ATOM_COORD_END = 54
 ATOMIC_ID_START = 7
 ATOMIC_ID_END = 11
-ATOMIC_SYMBOL_POS = 77
+ATOMIC_SYMBOL_POS_START = 76
+ATOMIC_SYMBOL_POS_END = 78
 
 def get_coords(line):
     return [float(line[ATOM_COORD_START:ATOM_COORD_START+8].strip()),        
@@ -36,7 +37,7 @@ def get_coordinates_from_pdb(path_to_pdb, exclude_hydrogens=True, type="ATOM"):
             if line.startswith("TER"):
                 break
             if line.startswith(type):
-                if type == "ATOM" and exclude_hydrogens and line[ATOMIC_SYMBOL_POS] == 'H':
+                if type == "ATOM" and exclude_hydrogens and line[ATOMIC_SYMBOL_POS_START:ATOMIC_SYMBOL_POS_END].strip() == 'H':
                     continue
                 coords = get_coords(line)
                 coords_list.append(coords)
@@ -63,7 +64,7 @@ def get_atomic_symbols_from_pdb(path_to_pdb, exclude_hydrogens=True):
             if line.startswith("TER"):
                 break
             if line.startswith("ATOM"):
-                symbol = line[ATOMIC_SYMBOL_POS]
+                symbol = line[ATOMIC_SYMBOL_POS_START:ATOMIC_SYMBOL_POS_END].strip()
                 if exclude_hydrogens and symbol == 'H':
                     continue
                 if symbol == 'A':
@@ -97,14 +98,14 @@ def get_atom_id_from_pdb(path_to_pdb):
                 atomic_ids.append(atomic_id)
     return np.array(atomic_ids)
 
-def filter_atoms_and_create_new_pdb(input_pdb_path: str, output_pdb_path: str, target_atom_ids: list) -> None:
+def filter_atoms_and_create_new_pdb(input_pdb_path: str, output_pdb_path: str, target_atom_ids: list, type="ATOM") -> None:
     make_dir(output_pdb_path)
     atom_dict = {}
     with open(input_pdb_path, 'r') as f:
         for line in f:
             if line.startswith("TER"):
                 break
-            if line.startswith("ATOM"):    
+            if line.startswith(type):    
                 atom_id = line[ATOMIC_ID_START:ATOMIC_ID_END+1].strip() 
                 atom_dict[int(atom_id)] = line
                 
