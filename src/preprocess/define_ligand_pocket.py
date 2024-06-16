@@ -5,6 +5,8 @@ import numpy as np
 import os
 from modules.voxelizer import voxelizer_atom
 from lib.pdb import get_coordinates_from_pdb, get_atomic_symbols_from_pdb, get_all_pdb_names
+from lib.voxel import get_voxel_info
+from lib.pdb_Bio import get_atom_names
 from lib.path import get_ligand_path, get_protein_path
 from lib.voxel import read_xyzv, coordinate_to_voxel_index
 from lib.voxel import extract_surroundings_voxel
@@ -53,31 +55,37 @@ def get_ligand_pocket(protein_coordinates, ligand_coordinates, protein_atomic_sy
 
 
 def main():
-    pdb_names = get_all_pdb_names()
+    
+    test_dir = "/mnt/ito/test/WD5/"
+    pdb_name = "2h14"
+    holo_name = "3smrA"
 
-    for pdb_name in pdb_names:
-        # pdb_name = '4lkk'
-        print(f"Processing {pdb_name}...")
-        try:
-            protein_coordinates = get_coordinates_from_pdb(get_protein_path(pdb_name))
-            protein_atomic_symbols = get_atomic_symbols_from_pdb(get_protein_path(pdb_name))
-            ligand_coordinates = get_coordinates_from_pdb(get_ligand_path(pdb_name))
-            _, grid_dims, grid_origin = read_xyzv(pdb_name)
-            # print(protein_coordinates.shape, ligand_coordinates.shape, atomic_symbols.shape, grid_dims, grid_origin)
-            ligand_pocket = get_ligand_pocket(
-                protein_coordinates=protein_coordinates,
-                ligand_coordinates=ligand_coordinates,
-                protein_atomic_symbols=protein_atomic_symbols,
-                grid_dims=grid_dims,
-                grid_origin=grid_origin
-            )
-            np.save(f"/home/ito/research/data/ligand_pocket/{pdb_name}/VOXEL_NUM_{VOXEL_NUM}.npy", ligand_pocket)
-            # exit(0)
+    protein_path = test_dir + pdb_name + ".pdb"
+    ligand_path = test_dir + holo_name + "_ligand.pdb"
+    dx_path = test_dir + pdb_name + "_min.dx"
+    save_path = test_dir + "ligand_pocket/" + holo_name + ".npy"
 
-        except FileNotFoundError as e:
-            print(e)
-            print(f"Failed to identify ligand pocket for {pdb_name}.")
-            continue
+    try:
+        protein_coordinates = get_coordinates_from_pdb(protein_path)
+        protein_atomic_symbols = get_atomic_symbols_from_pdb(protein_path)
+        ligand_coordinates = get_coordinates_from_pdb(path_to_pdb=ligand_path, exclude_hydrogens=False, type="HETATM")
+        grid_dims, grid_origin = get_voxel_info(dx_path=dx_path)
+        # print(protein_coordinates.shape, ligand_coordinates.shape, protein_atomic_symbols.shape, grid_dims, grid_origin)
+
+        ligand_pocket = get_ligand_pocket(
+            protein_coordinates=protein_coordinates,
+            ligand_coordinates=ligand_coordinates,
+            protein_atomic_symbols=protein_atomic_symbols,
+            grid_dims=grid_dims,
+            voxel_num=8,
+            grid_origin=grid_origin
+        )
+        np.save(save_path, ligand_pocket)
+        # exit(0)
+
+    except FileNotFoundError as e:
+        print(e)
+        print(f"Failed to identify ligand pocket for {pdb_name}.")
 
 if __name__ == '__main__':
     main()

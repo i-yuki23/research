@@ -39,8 +39,11 @@ def read_xyzv(pdb_name):
     grid_origin = np.array([x.min(), y.min(), z.min()])
     return voxel, np.array(grid_dims), grid_origin
 
-def get_voxel_info(pdb_name):
-    voxel_path = get_gist_path(pdb_name)
+def get_voxel_info(pdb_name=None, dx_path=None):
+    if pdb_name:
+        voxel_path = get_gist_path(pdb_name)
+    else:
+        voxel_path = dx_path
     with open(voxel_path, 'r') as f:
         file = f.readlines()
     grid_dims = file[0].strip().split()[5:8]

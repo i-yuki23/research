@@ -2,6 +2,7 @@ import numpy as np
 import os
 from data_loader.DataLoader import DataLoader
 import tensorflow as tf
+import glob
 
 class DoubleDataLoader(DataLoader):
 
@@ -58,23 +59,33 @@ class DoubleDataLoader(DataLoader):
             data_reshaped = tf.transpose(data, [0, 2, 3, 4, 1])
         return data_reshaped, labels
     
-    def get_test_data_and_water_ids(self, pdb_name, training_data_path):
-        data_path = os.path.join(training_data_path, f'{pdb_name}/*.npy')
-        data_path_list = glob.glob(data_path)
-        if len(data_path_list) == 0:
+    def get_test_data_and_water_ids(self, pdb_name, dis_or_non):
+        test_data_dir1 = os.path.join(self.training_data_dir1, dis_or_non)
+        test_data_dir2 = os.path.join(self.training_data_dir2, dis_or_non)
+
+        data_path1 = os.path.join(test_data_dir1, f'{pdb_name}/*.npy')
+        data_path2 = os.path.join(test_data_dir2, f'{pdb_name}/*.npy')
+        data_path_list1 = glob.glob(data_path1)
+        data_path_list2 = glob.glob(data_path2)
+        if (len(data_path_list1) == 0) or (len(data_path_list2) == 0):
             raise FileNotFoundError(f'No data found for {pdb_name}')
+        
         data_list = []
         water_ids = []
-        for data_name in data_path_list:
-            loaded_data = np.load(data_name)
-            if loaded_data.size == 0:
+        for data_name1, data_name2 in zip(data_path_list1, data_path_list2):
+            loaded_data1 = np.load(data_name1)
+            loaded_data2 = np.load(data_name2)
+            if loaded_data1.size == 0 or loaded_data2.size == 0:
                 raise ValueError(f"This is empty data: {pdb_name}")
-            loaded_data_reshaped = loaded_data[np.newaxis, :, :, :, :]
-            data_list.append(loaded_data_reshaped)
+            
+            concatenated_data = np.concatenate([loaded_data1, loaded_data2], axis=0)  # (channel, x, y, z)
+            concatenated_data_reshaped = concatenated_data[np.newaxis, :, :, :, :]
+            data_list.append(concatenated_data_reshaped)
 
-            file_name = os.path.basename(data_name)
+            file_name = os.path.basename(data_name1)
             water_id = int(file_name.split('_')[2].split('.')[0])
             water_ids.append(water_id)
 
         data_np = np.concatenate(data_list, axis=0)
-        return data_np, np.array(water_ids)
+        data_np_reshaped = tf.transpose(data_np, [0, 2, 3, 4, 1])
+        return data_np_reshaped, np.array(water_ids)

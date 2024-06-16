@@ -1,4 +1,4 @@
-from identify_ligand_pocket import get_ligand_pocket_form_ghecom
+from tmp.identify_ligand_pocket import get_ligand_pocket_form_ghecom
 from WaterClassifier.LigandPocketDefiner import LigandPocketDefiner
 
 class LigandPocketDefinerGhecom(LigandPocketDefiner):

@@ -25,30 +25,11 @@ class DataLoader:
             loaded_data_reshaped = loaded_data[np.newaxis, :, :, :, :]
             # print(loaded_data_reshaped.shape)
             data_list.append(loaded_data_reshaped)
-        print(len(data_list))
         data_np = np.concatenate(data_list, axis=0)
         return data_np
     
     def get_test_data_and_water_ids(self, pdb_name, training_data_path):
-        data_path = os.path.join(training_data_path, f'{pdb_name}/*.npy')
-        data_path_list = glob.glob(data_path)
-        if len(data_path_list) == 0:
-            raise FileNotFoundError(f'No data found for {pdb_name}')
-        data_list = []
-        water_ids = []
-        for data_name in data_path_list:
-            loaded_data = np.load(data_name)
-            if loaded_data.size == 0:
-                raise ValueError(f"This is empty data: {pdb_name}")
-            loaded_data_reshaped = loaded_data[np.newaxis, :, :, :, :]
-            data_list.append(loaded_data_reshaped)
-
-            file_name = os.path.basename(data_name)
-            water_id = int(file_name.split('_')[2].split('.')[0])
-            water_ids.append(water_id)
-
-        data_np = np.concatenate(data_list, axis=0)
-        return data_np, np.array(water_ids)
+        raise NotImplementedError("This method must be implemented in subclass")
     
 
     def _shuffle_data(self, data, labels):
