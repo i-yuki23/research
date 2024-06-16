@@ -173,7 +173,7 @@ def get_atoms_coords_for_each_atom_type(path_to_pdb: str) -> dict:
                 break
             if line.startswith("ATOM"):
                 coords = get_coords(line)
-                element = line[ATOMIC_SYMBOL_POS]
+                element = line[ATOMIC_SYMBOL_POS_START:ATOMIC_SYMBOL_POS_END].strip()
                 if element == 'A':
                     element = 'C'
                 if element == 'D':
