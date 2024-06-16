@@ -1,10 +1,9 @@
 import numpy as np
 import glob
 import os
-from data_loader.DataLoader import DataLoader
 import tensorflow as tf
 
-class DataLoaderForTest(DataLoader):
+class TestDataLoader:
 
     def __init__(self, test_dir):
         self.test_dir = test_dir

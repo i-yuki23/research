@@ -3,7 +3,7 @@ import os
 sys.path.append('..')
 from lib.path import get_training_data_dir, get_predicted_labeled_water_path, get_displaceable_water_path, get_non_displaceable_water_path
 from lib.pdb import filter_atoms_and_create_new_pdb
-from data_loader.DataLoaderForTest import DataLoaderForTest
+from analysis.unknown_protein_test.Class.TestDataLoader import DataLoaderForTest
 from data_loader.DoubleDataLoader import DoubleDataLoader
 from models.LeNet import LeNet
 from models.ResNet import ResNet
