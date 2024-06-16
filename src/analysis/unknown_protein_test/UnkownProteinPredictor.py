@@ -1,27 +1,13 @@
 class UnkownProteinPredictor:
-    def __init__(self, test_data_loader, prediction_executor, prediction_result_saver):
+    def __init__(self, test_data_loader, prediction_executor, prediction_analyzer):
         self.test_data_loader = test_data_loader
         self.prediction_executor = prediction_executor
-        self.prediction_result_saver = prediction_result_saver
+        self.prediction_analyzer = prediction_analyzer
 
     def run(self):
-        test_data = self.test_data_loader.load_data()
+        test_data, test_water_ids = self.test_data_loader.get_test_data_and_water_ids()
         
-        # 5. Execute predictions on test data
         prediction = self.prediction_executor.predict(test_data)
         
-        # 6. Save prediction results as PDB files
-        self.prediction_analyzer.save(prediction)
-
-# Example usage
-test_data_loader = TestDataLoader()
-prediction_executor = PredictionExecutor(model)
-prediction_result_saver = PredictionAnalyzer()
-
-prediction_pipeline = PredictionPipeline(
-    test_data_loader=test_data_loader,
-    prediction_executor=prediction_executor,
-    prediction_result_saver=prediction_result_saver
-)
-
-prediction_pipeline.run()
+        self.prediction_analyzer.set_prediction_and_predicted_labels(prediction)
+        self.prediction_analyzer.save_prediction_results_pdb(test_water_ids)
