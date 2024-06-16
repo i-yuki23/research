@@ -60,22 +60,3 @@ def _convert_coordinates_to_water_ids(water_coordinates: np.ndarray, water_coord
         target_water_ids.append(water_coordinate_to_id[tuple(coordinate)])
     return target_water_ids
 
-test_dir = "/mnt/ito/test/WD5/"
-pdb_name = "2h14"
-holo_name = "3smrA"
-
-dx_path = test_dir + pdb_name + "_min.dx"
-ligand_pocket_path = test_dir + "ligand_pocket/" + holo_name + ".npy"
-water_path = test_dir + f"{pdb_name}_apo_HOH.pdb"
-
-water_coordinates = get_coordinates_from_pdb(water_path, type="HETATM")
-print(water_coordinates.shape)
-ligand_pocket = np.load(ligand_pocket_path)
-grid_dims, grid_origin = get_voxel_info(dx_path=dx_path)
-
-
-input_pdb_path = water_path
-output_pdb_path = test_dir + f"water_inside_ligand_pocket/{pdb_name}_apo/" + "HOH.pdb"
-print(output_pdb_path)
-
-save_water_coordinates_inside_ligand_pocket(input_pdb_path, output_pdb_path, water_coordinates, ligand_pocket, grid_dims, grid_origin)
