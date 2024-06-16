@@ -75,7 +75,7 @@ def get_atomic_symbols_from_pdb(path_to_pdb, exclude_hydrogens=True):
 
     return np.array(atomic_symbols)
 
-def get_atom_id_from_pdb(path_to_pdb):
+def get_atom_id_from_pdb(path_to_pdb, type):
     """
     Extracts atomic ids from a PDB file.
     
@@ -93,7 +93,7 @@ def get_atom_id_from_pdb(path_to_pdb):
         for line in f:
             if line.startswith("TER"):
                 break
-            if line.startswith("ATOM"):
+            if line.startswith(type):
                 atomic_id = line[ATOMIC_ID_START:ATOMIC_ID_END+1].strip() 
                 atomic_ids.append(atomic_id)
     return np.array(atomic_ids)

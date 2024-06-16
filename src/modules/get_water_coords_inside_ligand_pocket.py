@@ -38,7 +38,7 @@ def get_water_coordinates_inside_ligand_pocket(water_coordinates: np.ndarray, li
     water_index_to_coordinate, _ = create_convert_dict(water_coordinates, grid_origin)
     water_coordinates_inside_ligand_pocket = convert_voxel_to_water_coordinates(voxelized_water_center_inside_ligand_pocket, water_index_to_coordinate)
 
-    return water_coordinates_inside_ligand_pocket
+    return water_coordinates_inside_ligand_pocket, water_ids_inside_ligand_pocket
 
 
 
