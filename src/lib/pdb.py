@@ -44,6 +44,30 @@ def get_coordinates_from_pdb(path_to_pdb, exclude_hydrogens=True, type="ATOM"):
                 
     return np.array(coords_list, dtype="float64")
 
+def get_ligand_coordinates_from_pdb(path_to_pdb):
+    """
+    Extracts coordinates of ligand atoms from a PDB file.
+    
+    Parameters:
+    - path_to_pdb: str, path to the PDB file
+    
+    Returns:
+    - np.ndarray, coordinates of atoms
+    """
+    if not os.path.exists(path_to_pdb):
+        raise FileNotFoundError(f"{path_to_pdb} does not exist.")
+    
+    coords_list = []
+    with open(path_to_pdb, 'r') as f:
+        for line in f:
+            if line.startswith("TER"):
+                break
+            if line.startswith("ATOM") or line.startswith("HETATM"):
+                coords = get_coords(line)
+                coords_list.append(coords)
+                
+    return np.array(coords_list, dtype="float64")
+
 def get_atomic_symbols_from_pdb(path_to_pdb, exclude_hydrogens=True):
     """
     Extracts atomic symbols from a PDB file.

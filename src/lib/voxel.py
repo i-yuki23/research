@@ -8,7 +8,7 @@ ATOM_COORD_START = 30
 ATOM_COORD_END = 54
 ATOMIC_SYMBOL_POS = 77
 
-def coordinate_to_voxel_index(coordinate, grid_origin, length_voxel=0.5):
+def coordinate_to_voxel_index(coordinate: np.ndarray, grid_origin: np.ndarray, length_voxel=0.5) -> np.ndarray:
     return ((coordinate - grid_origin) // length_voxel).astype(np.int64)
 
 def coordinate_to_grid(coordinate, grid_origin, length_voxel):

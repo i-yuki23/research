@@ -5,6 +5,7 @@ from lib.path import get_test_gr_path
 from lib.voxel import get_voxel_info
 import numpy as np
 from lib.dx import read_dx
+from lib.helper import make_dir
 from modules.fetch_neighboring_voxel import fetch_neighboring_voxel
 
 class VoxelDataExtractor:
@@ -32,6 +33,7 @@ class VoxelDataExtractor:
         test_data = self.__extract_test_voxel_data(water_coords)
 
         for index, one_test_data in enumerate(test_data):
-            save_path_dis = f"/mnt/ito/test/{self.apo_name}/test_data/" + self.holo_name + f"/water_id_{water_ids[index]}.npy"
-            np.save(save_path_dis, one_test_data[:, :, :, :])
+            save_path = f"/mnt/ito/test/{self.apo_name}/test_data/" + self.holo_name + f"/water_id_{water_ids[index]}.npy"
+            make_dir(save_path)
+            np.save(save_path, one_test_data[:, :, :, :])
 

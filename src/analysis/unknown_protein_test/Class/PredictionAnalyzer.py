@@ -1,6 +1,7 @@
 import numpy as np
 from lib.path import get_test_water_path
 from lib.pdb import filter_atoms_and_create_new_pdb
+from lib.helper import make_dir
 
 
 class PredictionAnalyzer:
@@ -32,4 +33,5 @@ class PredictionAnalyzer:
             output_path = f"/mnt/ito/test/{self.apo_name}/predicted_labeled_water/{self.holo_name}/{label}_pred_O_placed_{self.apo_name}_3.0.pdb"
             input_path = get_test_water_path(self.apo_name)
             # Process the predicted data to filter and create a new PDB for each label type
+            make_dir(output_path)
             filter_atoms_and_create_new_pdb(input_path, output_path, water_ids)

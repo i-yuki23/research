@@ -1,7 +1,7 @@
 from modules.define_ligand_pocket import get_ligand_pocket
 from lib.pdb import get_coordinates_from_pdb, get_atomic_symbols_from_pdb
 from lib.path import get_ligand_path, get_protein_path
-from WaterClassifier.LigandPocketDefiner import LigandPocketDefiner
+from preprocess.Class.WaterClassifier.LigandPocketDefiner import LigandPocketDefiner
 
 class LigandPocketDefinerOriginal(LigandPocketDefiner):
 

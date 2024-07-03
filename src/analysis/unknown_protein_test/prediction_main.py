@@ -15,7 +15,7 @@ from tensorflow.keras.losses import BinaryCrossentropy
 
 def main():
     apo_name = "2h14"
-    holo_name = '3smrA'
+    holo_name = '4erqAD'
     test_dir = f'/mnt/ito/test/{apo_name}/test_data/'
     model_func = ResNet
 
