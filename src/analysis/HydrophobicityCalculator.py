@@ -74,12 +74,18 @@ class HydrophobicityCalculator:
         atoms_in_ligand_pocket = self._get_atoms_in_ligand_pocket(ligand_pocket_grid)
 
         total_hydrophobicity = 0
+        total_sasa = 0
         for atom in atoms_in_ligand_pocket:
             try:
-                total_hydrophobicity += self._calculate_atom_hydrophobicity(atom)
+                hydrophobicity, sasa = self._calculate_atom_hydrophobicity(atom)
+                total_hydrophobicity += hydrophobicity
+                total_sasa += sasa
             except (KeyError, AssertionError) as e:
                 continue
-        return total_hydrophobicity
+            
+        if total_sasa == 0:
+            return 0
+        return total_hydrophobicity / total_sasa
 
     def _calculate_atom_hydrophobicity(self, atom):
         atom_id = atom.get_serial_number()
@@ -87,12 +93,10 @@ class HydrophobicityCalculator:
             raise KeyError(f"Atom serial number {atom_id} not found in atom_indices.")
         
         sasa_index = self.atom_indices[atom_id]
-        # print(f"Calculating SASA for atom_id: {atom_id} at sasa_index: {sasa_index}")
 
         sasa = self.sasa_result.atomArea(sasa_index)
-        # print(f"SASA for atom_id {atom_id}: {sasa}")
         hydrophobicity = self.HYDROPHOBICITY_INDICES.get(atom.get_parent().resname, 0)
-        return sasa * hydrophobicity
+        return hydrophobicity * sasa, sasa
 
 
 hydrophobicities = []
@@ -102,4 +106,4 @@ for pdb_name in get_all_pdb_names():
     hydrophobicity_calculator = HydrophobicityCalculator(get_protein_path(pdb_name), grid_origin, ligand_pocket_definer)
     hydrophobicities.append(hydrophobicity_calculator.calculate_hydrophobicity())
 
-np.save('hydrophobicities.npy', np.array(hydrophobicities))
+np.save('hydrophobicities_std.npy', np.array(hydrophobicities))

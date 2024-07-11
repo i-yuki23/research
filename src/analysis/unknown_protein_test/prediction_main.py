@@ -14,9 +14,10 @@ from tensorflow.keras.metrics import Recall, Precision
 from tensorflow.keras.losses import BinaryCrossentropy
 
 def main():
-    apo_name = "2h14"
-    holo_name = '4erqAD'
-    test_dir = f'/mnt/ito/test/{apo_name}/test_data/'
+    protein_name = 'CDK2'
+    apo_name = "1pw2"
+    holo_name = '1pxi'
+    test_dir = f'/mnt/ito/test/{protein_name}/test_data/'
     model_func = ResNet
 
     settings = {
@@ -44,7 +45,7 @@ def main():
 
     test_data_loader = TestDataLoader(test_dir, holo_name)
     prediction_executor = PredictionExecutor(model, latest_checkpoint)
-    prediction_analyzer = PredictionAnalyzer(apo_name, holo_name, optimal_threshold=0.5)
+    prediction_analyzer = PredictionAnalyzer(protein_name, apo_name, holo_name, optimal_threshold=0.5)
 
     unkown_protein_predictor = UnkownProteinPredictor(
         test_data_loader=test_data_loader,

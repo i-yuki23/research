@@ -8,12 +8,12 @@ from lib.voxel import get_voxel_info
 
 class LigandPocketDefiner:
 
-    def __init__(self, apo_name, holo_name, voxel_num):
+    def __init__(self, protein_name, apo_name, holo_name, voxel_num):
         self.voxel_num = voxel_num
-        self.grid_dims, self.grid_origin = get_voxel_info(dx_path=get_test_gr_path(apo_name))
-        self.protein_coordinates = get_coordinates_from_pdb(get_test_protein_path(apo_name))
-        self.protein_atomic_symbols = get_atomic_symbols_from_pdb(get_test_protein_path(apo_name))
-        self.ligand_coordinates = get_ligand_coordinates_from_pdb(get_test_ligand_path(apo_name, holo_name))
+        self.grid_dims, self.grid_origin = get_voxel_info(dx_path=get_test_gr_path(protein_name, apo_name))
+        self.protein_coordinates = get_coordinates_from_pdb(get_test_protein_path(protein_name, apo_name))
+        self.protein_atomic_symbols = get_atomic_symbols_from_pdb(get_test_protein_path(protein_name, apo_name))
+        self.ligand_coordinates = get_ligand_coordinates_from_pdb(get_test_ligand_path(protein_name, holo_name))
 
     def define_ligand_pocket(self):
         

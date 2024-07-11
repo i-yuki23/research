@@ -11,11 +11,12 @@ from typing import Tuple
 
 class LigandPocketWaterMoleculesExtractor:
 
-    def __init__(self, apo_name):
+    def __init__(self, protein_name, apo_name):
+        self.protein_name = protein_name
         self.apo_name = apo_name
-        self.water_coordinates = get_coordinates_from_pdb(get_test_water_path(apo_name), type="ATOM")
-        self.water_ids = get_atom_id_from_pdb(get_test_water_path(apo_name), type="ATOM")
-        self.grid_dims, self.grid_origin = get_voxel_info(dx_path=get_test_gr_path(apo_name))
+        self.water_coordinates = get_coordinates_from_pdb(get_test_water_path(protein_name, apo_name), type="ATOM")
+        self.water_ids = get_atom_id_from_pdb(get_test_water_path(protein_name, apo_name), type="ATOM")
+        self.grid_dims, self.grid_origin = get_voxel_info(dx_path=get_test_gr_path(protein_name, apo_name))
         self.__set_convert_dict(self.water_coordinates, self.water_ids, self.grid_origin)
 
     def __set_convert_dict(self, water_coordinates: np.ndarray, water_ids, grid_origin: np.ndarray) -> None:
@@ -64,5 +65,5 @@ class LigandPocketWaterMoleculesExtractor:
 
 
     def save_water_coordinates_inside_ligand_pocket(self, output_pdb_path: str, water_ids_inside_ligand_pocket: np.ndarray, type: str):
-        filter_atoms_and_create_new_pdb(input_pdb_path=get_test_water_path(self.apo_name), output_pdb_path=output_pdb_path, target_atom_ids=water_ids_inside_ligand_pocket, type=type)
+        filter_atoms_and_create_new_pdb(input_pdb_path=get_test_water_path(self.protein_name, self.apo_name), output_pdb_path=output_pdb_path, target_atom_ids=water_ids_inside_ligand_pocket, type=type)
 

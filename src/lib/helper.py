@@ -87,3 +87,8 @@ def remove_all_checkpoints(checkpoint_dir):
 
     for file in files:
         os.remove(file)
+
+def get_list_from_pdb_text(pdb_test_path):
+    with open(pdb_test_path, mode='r') as f:
+        pdb_list = f.read().splitlines()
+    return pdb_list

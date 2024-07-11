@@ -8,3 +8,6 @@ checkpoints/
 *#
 src/lib/path.py
 src/history
+placevent
+gr-predictor
+*.npy

@@ -10,11 +10,12 @@ from modules.fetch_neighboring_voxel import fetch_neighboring_voxel
 
 class VoxelDataExtractor:
 
-    def __init__(self, apo_name, holo_name, base_voxel_path, data_voxel_num):
+    def __init__(self, protein_name, apo_name, holo_name, base_voxel_path, data_voxel_num):
+        self.protein_name = protein_name
         self.apo_name = apo_name
         self.holo_name = holo_name
         self.data_voxel_num = data_voxel_num
-        self.grid_dims, self.grid_origin = get_voxel_info(dx_path=get_test_gr_path(apo_name))
+        self.grid_dims, self.grid_origin = get_voxel_info(dx_path=get_test_gr_path(protein_name, apo_name))
         self.base_voxel = self.__get_base_voxel_data(base_voxel_path)
 
     def __get_base_voxel_data(self, base_voxel_path):
@@ -33,7 +34,7 @@ class VoxelDataExtractor:
         test_data = self.__extract_test_voxel_data(water_coords)
 
         for index, one_test_data in enumerate(test_data):
-            save_path = f"/mnt/ito/test/{self.apo_name}/test_data/" + self.holo_name + f"/water_id_{water_ids[index]}.npy"
+            save_path = f"/mnt/ito/test/{self.protein_name}/test_data/" + self.holo_name + f"/water_id_{water_ids[index]}.npy"
             make_dir(save_path)
             np.save(save_path, one_test_data[:, :, :, :])
 

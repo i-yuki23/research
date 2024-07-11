@@ -6,10 +6,10 @@ import numpy as np
 from lib.voxel import coordinate_to_voxel_index, get_voxel_info
 from lib.pdb import get_coordinates_from_pdb, filter_atoms_and_create_new_pdb
 
-def create_convert_dict(water_coordinates: np.ndarray, grid_origin: np.ndarray) -> None:
+def create_convert_dict(water_coordinates: np.ndarray, water_ids: np.ndarray, grid_origin: np.ndarray) -> None:
     water_voxel_index = coordinate_to_voxel_index(water_coordinates, grid_origin)
     water_index_to_coordinate = {tuple(water_voxel_index[i]): water_coordinates[i] for i in range(water_voxel_index.shape[0])}
-    water_coordinate_to_id = {tuple(water_coordinates[i]): i for i in range(water_coordinates.shape[0])}
+    water_coordinate_to_id = {tuple(water_coordinate): int(water_id) for water_coordinate, water_id in zip(water_coordinates, water_ids)}
     return water_index_to_coordinate, water_coordinate_to_id
 
 def get_voxelized_water_center(water_coordinates: np.ndarray, grid_dims: np.ndarray, grid_origin: np.ndarray) -> np.ndarray:
@@ -32,25 +32,22 @@ def convert_voxel_to_water_coordinates(water_voxelized: np.ndarray, water_index_
         water_coordinates.append(water_index_to_coordinate[tuple(index)])
     return np.vstack(water_coordinates)
 
-def get_water_coordinates_inside_ligand_pocket(water_coordinates: np.ndarray, ligand_pocket: np.ndarray, grid_dims: np.ndarray, grid_origin: np.ndarray) -> np.ndarray:
+def get_water_coordinates_inside_ligand_pocket(water_coordinates: np.ndarray, water_ids: np.ndarray, ligand_pocket: np.ndarray, grid_dims: np.ndarray, grid_origin: np.ndarray) -> np.ndarray:
     voxelized_water_center = get_voxelized_water_center(water_coordinates, grid_dims, grid_origin)
     voxelized_water_center_inside_ligand_pocket = np.where((voxelized_water_center == 1) & (ligand_pocket == 1), 1, 0)
-    water_index_to_coordinate, _ = create_convert_dict(water_coordinates, grid_origin)
+    water_index_to_coordinate, _ = create_convert_dict(water_coordinates, water_ids, grid_origin)
     water_coordinates_inside_ligand_pocket = convert_voxel_to_water_coordinates(voxelized_water_center_inside_ligand_pocket, water_index_to_coordinate)
 
-    return water_coordinates_inside_ligand_pocket, water_ids_inside_ligand_pocket
+    return water_coordinates_inside_ligand_pocket
 
+def save_water_coordinates_inside_ligand_pocket(input_pdb_path: str, output_pdb_path: str, water_coordinates: np.ndarray, water_ids: np.ndarray, ligand_pocket: np.ndarray, grid_dims: np.ndarray, grid_origin: np.ndarray):
+    target_water_ids = _get_water_ids_inside_ligand_pocket(water_coordinates, water_ids, ligand_pocket, grid_dims, grid_origin)
+    print(target_water_ids)
+    filter_atoms_and_create_new_pdb(input_pdb_path=input_pdb_path, output_pdb_path=output_pdb_path, target_atom_ids=target_water_ids, type="HETATM")
 
-
-def save_water_coordinates_inside_ligand_pocket(input_pdb_path: str, output_pdb_path: str, water_coordinates: np.ndarray, ligand_pocket: np.ndarray, grid_dims: np.ndarray, grid_origin: np.ndarray):
-    water_ids = _get_water_ids_inside_ligand_pocket(water_coordinates, ligand_pocket, grid_dims, grid_origin)
-    water_ids = [i + 2344 for i in water_ids]
-    print(water_ids)
-    filter_atoms_and_create_new_pdb(input_pdb_path=input_pdb_path, output_pdb_path=output_pdb_path, target_atom_ids=water_ids, type="HETATM")
-
-def _get_water_ids_inside_ligand_pocket(water_coordinates: np.ndarray, ligand_pocket: np.ndarray, grid_dims: np.ndarray, grid_origin: np.ndarray) -> Tuple[list, list]:
-    _, water_coordinate_to_id = create_convert_dict(water_coordinates, grid_origin)
-    water_coordinates_inside_ligand_pocket = get_water_coordinates_inside_ligand_pocket(water_coordinates, ligand_pocket, grid_dims, grid_origin)
+def _get_water_ids_inside_ligand_pocket(water_coordinates: np.ndarray, water_ids: np.ndarray, ligand_pocket: np.ndarray, grid_dims: np.ndarray, grid_origin: np.ndarray) -> Tuple[list, list]:
+    _, water_coordinate_to_id = create_convert_dict(water_coordinates, water_ids, grid_origin)
+    water_coordinates_inside_ligand_pocket = get_water_coordinates_inside_ligand_pocket(water_coordinates, water_ids, ligand_pocket, grid_dims, grid_origin)
     water_ids_inside_ligand_pocket = _convert_coordinates_to_water_ids(water_coordinates_inside_ligand_pocket, water_coordinate_to_id)
     return water_ids_inside_ligand_pocket
 
@@ -59,4 +56,5 @@ def _convert_coordinates_to_water_ids(water_coordinates: np.ndarray, water_coord
     for coordinate in water_coordinates:
         target_water_ids.append(water_coordinate_to_id[tuple(coordinate)])
     return target_water_ids
+
 
