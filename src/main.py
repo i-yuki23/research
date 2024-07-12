@@ -4,7 +4,7 @@ from data_loader.SingleDataLoader import SingleDataLoader
 from data_loader.DoubleDataLoader import DoubleDataLoader
 from models.LeNet import LeNet
 from models.AlexNet import Alexnet
-from models.ResNet import ResNet1
+from models.ResNet import ResNet
 from trainer.train import train_func
 from trainer.aug_train import aug_train_func
 from lib.path import get_training_data_dir
@@ -17,10 +17,10 @@ train_list = os.path.join(data_dir, 'train_list')
 test_list = os.path.join(data_dir, 'test_list')
 val_list = os.path.join(data_dir, 'val_list')
 
-DATA_TYPE1 = 'Protein'
+DATA_TYPE1 = 'gr'
 # DATA_TYPE2 = 'Protein'
 DATA_VOXEL_NUM = 10
-CLASSIFYING_RULE = 'WaterClassifyingRuleSurface'
+CLASSIFYING_RULE = 'WaterClassifyingRuleEmbedding'
 LIGAND_POCKET_DEFINER = 'LigandPocketDefinerOriginal'
 LIGAND_VOXEL_NUM = 8
 
@@ -44,9 +44,9 @@ learning_rate = 1e-4
 early_stopping = 30
 BN = True
 dropout = 0.5
-model_func = ResNet1
+model_func = ResNet
 MODEL_NAME = model_func.__name__
-TRAINER_NAME = 'aug_train_90'
+TRAINER_NAME = 'aug_train'
 losses = [BinaryCrossentropy(), dice_loss]
 loss= losses[0]
 metrics = ['accuracy', dice_coefficient, Recall(), Precision()]
@@ -78,7 +78,14 @@ model_checkpoint = True
 #                                     BN = BN,
 #                                     dropout=dropout
 #                                 )
+pos = train_labels.sum()
+neg = train_labels.shape[0] - pos
+total = train_labels.shape[0]
 
+weight_for_0 = (1 / neg) * (total / 2.0)
+weight_for_1 = (1 / pos) * (total / 2.0)
+class_weight = {0: weight_for_0, 1: weight_for_1}
+print(class_weight)
 
 clf, clf_hist = aug_train_func(
                                 x_train=train_data,
@@ -92,12 +99,13 @@ clf, clf_hist = aug_train_func(
                                 epochs=epochs,
                                 batch_size=batch_size,
                                 num_rotations=3,
-                                angle_unit=90,
+                                angle_unit=45,
                                 n_base=n_base,
                                 learning_rate=learning_rate,
                                 early_stopping=early_stopping,
                                 checkpoint_path=checkpoint_path,
                                 model_checkpoint=model_checkpoint,
+                                class_weight=class_weight,
                                 BN = BN,
                                 dropout=dropout
                             )

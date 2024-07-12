@@ -62,5 +62,5 @@ class SingleDataLoader(DataLoader):
             water_ids.append(water_id)
 
         data_np = np.concatenate(data_list, axis=0)
-        data_np_reshaped = tf.transpose(data_np, [0, 2, 3, 4, 1])
-        return data_np_reshaped, np.array(water_ids)
+        # data_np_reshaped = tf.transpose(data_np, [0, 2, 3, 4, 1])
+        return data_np, np.array(water_ids)
