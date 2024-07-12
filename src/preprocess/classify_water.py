@@ -21,15 +21,14 @@
 import os
 import sys
 sys.path.append('..')
-import traceback
 
 from lib.voxel import get_voxel_info
 from lib.pdb import get_coordinates_from_pdb, get_all_pdb_names
 from lib.path import get_water_path
 from lib.helper import make_dir
-from WaterClassifier.WaterClassifier import WaterClassifier
-from WaterClassifier.ClassifyingRuleFactory import ClassifyingRuleFactory
-from WaterClassifier.LigandPocketDefinerFactory import LigandPocketDefinerFactory
+from Class.WaterClassifier.WaterClassifier import WaterClassifier
+from Class.WaterClassifier.ClassifyingRuleFactory import ClassifyingRuleFactory
+from Class.WaterClassifier.LigandPocketDefinerFactory import LigandPocketDefinerFactory
 DATA_DIR = "/home/ito/research/data/labeled_water/"
 
 def classify_water(pdb_name, ligand_voxel_num, classifying_rule_name, ligand_pocket_definer_name):
@@ -67,9 +66,9 @@ def classify_water(pdb_name, ligand_voxel_num, classifying_rule_name, ligand_poc
 
 
 def main():
-    ligand_voxel_nums = [10, 9, 8, 6, 4]
-    classifying_rule_names = ["WaterClassifyingRuleCenter", "WaterClassifyingRuleSurface"]
-    ligand_pocket_definer_names = ["LigandPocketDefinerGhecom", "LigandPocketDefinerOriginal"]
+    ligand_voxel_nums = [8]
+    classifying_rule_names = ["WaterClassifyingRuleEmbedding"]
+    ligand_pocket_definer_names = ["LigandPocketDefinerOriginal"]
     pdb_names = get_all_pdb_names()
 
     for ligand_voxel_num in ligand_voxel_nums:

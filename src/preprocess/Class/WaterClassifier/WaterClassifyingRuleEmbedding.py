@@ -5,7 +5,8 @@ from lib.helper import extract_points_within_threshold
 from modules.get_atomic_symbol_coords_dict import get_atomic_symbol_coords_dict_from_pdb
 from lib.path import get_ligand_path
 
-class WaterClassifyingRuleSurface(WaterClassifyingRule):
+class WaterClassifyingRuleEmbedding(WaterClassifyingRule):
+    EMBEDDING_DIST = {'C': -0.069829, 'N': 0.3013159, 'O': 0.3876812, 'S': -0.316393, 'H': 0.7737, 'B' : 0.08099, 'F' : -0.177, 'P' : -0.209, 'I' : 0}
 
     def __init__(self, pdb_name, grid_dims, grid_origin):
         super().__init__(pdb_name, grid_dims, grid_origin)
@@ -21,7 +22,8 @@ class WaterClassifyingRuleSurface(WaterClassifyingRule):
 
         temp_displaceable_water_coords = []
         for atomic_symbol, coords in ligand_atomic_symbol_coords_dict.items():
-            threshold = self.RADIUSES[atomic_symbol] + self.RADIUSES['O']
+            # subtract embedding distance from threshold
+            threshold = self.RADIUSES[atomic_symbol] + self.RADIUSES['O'] - self.EMBEDDING_DIST[atomic_symbol]
             points = extract_points_within_threshold(coords, water_coordinates_inside_ligand_pocket, threshold)
             if points.size > 0:
                 temp_displaceable_water_coords.append(points)

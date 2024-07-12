@@ -1,4 +1,4 @@
-from WaterClassifier.WaterClassifyingRule import WaterClassifyingRule
+from Class.WaterClassifier.WaterClassifyingRule import WaterClassifyingRule
 import numpy as np
 from typing import Tuple
 from lib.helper import extract_points_within_threshold
