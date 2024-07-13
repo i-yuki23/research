@@ -1,5 +1,5 @@
 import sys
-sys.path.append('..')
+sys.path.append('../..')
 
 from Bio.PDB import PDBParser
 import freesasa
@@ -73,8 +73,11 @@ class AverageSASACalculator:
                 sasa_list.append(self._calculate_atom_sasa(atom))
             except (KeyError, AssertionError) as e:
                 continue
-        
-        return sum(sasa_list) / len(sasa_list)
+            
+        sasa_len = len(sasa_list)
+        if sasa_len == 0:
+            return 0
+        return sum(sasa_list) / sasa_len
 
     def _calculate_atom_sasa(self, atom):
         atom_id = atom.get_serial_number()
@@ -83,8 +86,7 @@ class AverageSASACalculator:
         
         sasa_index = self.atom_indices[atom_id]
 
-        sasa = self.sasa_result.atomArea(sasa_index)
-        return sasa
+        return self.sasa_result.atomArea(sasa_index)
 
 
 ave_sasa_list = []
@@ -92,6 +94,6 @@ for pdb_name in get_all_pdb_names():
     grid_dims, grid_origin = get_voxel_info(pdb_name)
     ligand_pocket_definer = LigandPocketDefinerOriginal(pdb_name, grid_dims, grid_origin, 8)
     averageSASA_calculator = AverageSASACalculator(get_protein_path(pdb_name), grid_origin, ligand_pocket_definer)
-    ave_sasa_list.append(averageSASA_calculator.calculate_hydrophobicity())
+    ave_sasa_list.append(averageSASA_calculator.calculate_ligand_pocket_ave_sasa())
 
 np.save('ave_sasa.npy', np.array(ave_sasa_list))
