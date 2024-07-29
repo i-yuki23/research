@@ -13,9 +13,9 @@ from tensorflow.keras.metrics import Recall, Precision
 from tensorflow.keras.losses import BinaryFocalCrossentropy, BinaryCrossentropy
 
 data_dir = '../data'
-train_list = os.path.join(data_dir, 'train_list')
-test_list = os.path.join(data_dir, 'test_list')
-val_list = os.path.join(data_dir, 'val_list')
+train_list = os.path.join(data_dir, 'train.txt')
+test_list = os.path.join(data_dir, 'test.txt')
+val_list = os.path.join(data_dir, 'val.txt')
 
 DATA_TYPE1 = 'gr'
 # DATA_TYPE2 = 'Protein'
@@ -35,13 +35,13 @@ train_data, train_labels = data_loader.load_data(train_list)
 test_data, test_labels = data_loader.load_data(test_list)
 val_data, val_labels = data_loader.load_data(val_list)
 
-
+print(train_data.shape)
 input_shape = (DATA_VOXEL_NUM*2+1, DATA_VOXEL_NUM*2+1, DATA_VOXEL_NUM*2+1, train_data.shape[-1])
 epochs = 300
 batch_size = 128
 n_base = 8
 learning_rate = 1e-4
-early_stopping = 30
+early_stopping = 40
 BN = True
 dropout = 0.5
 model_func = ResNet

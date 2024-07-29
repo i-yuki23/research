@@ -34,8 +34,8 @@ def get_coordinates_from_pdb(path_to_pdb, exclude_hydrogens=True, type="ATOM"):
     coords_list = []
     with open(path_to_pdb, 'r') as f:
         for line in f:
-            if line.startswith("TER"):
-                break
+            # if line.startswith("TER"):
+            #     break
             if line.startswith(type):
                 if type == "ATOM" and exclude_hydrogens and line[ATOMIC_SYMBOL_POS_START:ATOMIC_SYMBOL_POS_END].strip() == 'H':
                     continue

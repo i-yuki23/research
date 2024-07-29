@@ -68,41 +68,22 @@ def ResNet(n_base, input_shape, learning_rate, loss, metrics, class_num=1, dropo
     
     return model
 
+"""
+ハイパラ
 
-def ResNet1(n_base, input_shape, learning_rate, loss, metrics, class_num=1, dropout=0.4, BN=True, Sdropout=""):
-    inputs = Input(shape=input_shape)
-    
-    # Initial Conv3D layer
-    x = Conv3D(n_base, kernel_size=KERNEL_SIZE, strides=1, padding='same')(inputs)
-    if BN:
-        x = BatchNormalization()(x)
-    x = Activation('relu')(x)
-    x = MaxPooling3D(pool_size=(2, 2, 2))(x)
-    
-    # ResNet blocks
-    x = resnet_block(x, n_base, strides=1, BN=BN)
+epochs = 300
+batch_size = 128
+n_base = 8
+learning_rate = 1e-4
+early_stopping = 40
+BN = True
+dropout = 0.5
+model_func = ResNet
+MODEL_NAME = model_func.__name__
+TRAINER_NAME = 'aug_train'
+losses = [BinaryCrossentropy(), dice_loss]
+loss= losses[0]
+metrics = ['accuracy', dice_coefficient, Recall(), Precision()]
 
-    x = resnet_block(x, n_base*2, strides=1, BN=BN)
-    x = MaxPooling3D(pool_size=(2, 2, 2))(x)
-    
-    x = resnet_block(x, n_base*4, strides=1, BN=BN)
-    x = MaxPooling3D(pool_size=(2, 2, 2))(x)
-    
-    # Global Average Pooling
-    x = GlobalAveragePooling3D()(x)
-    
-    # Dense and Dropout layers
-    x = Dense(n_base*4, activation='relu')(x)
-    if dropout:
-        x = Dropout(dropout)(x)
-    outputs = Dense(class_num, activation='sigmoid')(x)
-    
-    model = Model(inputs, outputs)
-    
-    optimizer = AdamW(learning_rate=learning_rate)
-    model.compile(loss=loss,
-                  optimizer=optimizer,
-                  metrics=metrics)
-    model.summary()
-    
-    return model
+"""
+

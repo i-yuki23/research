@@ -6,7 +6,7 @@ from lib.voxel import coordinate_to_voxel_index
 from lib.voxel import extract_surroundings_voxel
 
 # Constants for readability
-PROTEIN_PRESENT_THRESHOLD = 1-np.exp(-1)
+PROTEIN_PRESENT_THRESHOLD = 1          #1-np.exp(-1)
 
 def is_protein_present(protein_voxel, threshold=PROTEIN_PRESENT_THRESHOLD):
     return np.any(protein_voxel > threshold, axis=0)

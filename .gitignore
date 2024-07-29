@@ -6,6 +6,7 @@ checkpoints/
 *.sh~
 *.out
 *#
+*.dx
 src/lib/path.py
 src/history
 placevent

@@ -1,5 +1,5 @@
 import sys
-sys.path.append('..')
+sys.path.append('../..')
 
 from preprocess.Class.WaterClassifier.LigandPocketDefinerOriginal import LigandPocketDefinerOriginal
 from lib.voxel import get_voxel_info

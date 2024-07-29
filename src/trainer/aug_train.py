@@ -25,8 +25,8 @@ def aug_train_func(x_train, y_train, x_val, y_val, input_shape, model_func, epoc
         model_checkpoint_callback = ModelCheckpoint(
         filepath=checkpoint_path,
         save_weights_only=True,
-        monitor='val_accuracy',
-        mode='max',
+        monitor='val_loss',
+        mode='min',
         save_best_only=True)
         callbacks_list.append(model_checkpoint_callback)
         
