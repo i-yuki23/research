@@ -1,5 +1,5 @@
 from trainer.DataGenerator.VoxelDataGenerator import VoxelDataGenerator
-from keras.callbacks import EarlyStopping, ModelCheckpoint
+from keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
 from lib.helper import remove_all_checkpoints
 import os
 
@@ -17,6 +17,9 @@ def aug_train_func(x_train, y_train, x_val, y_val, input_shape, model_func, epoc
     if early_stopping:
         early_stopping = EarlyStopping(monitor='val_loss', patience=early_stopping, verbose=1, restore_best_weights=True)
         callbacks_list.append(early_stopping)
+
+    reduce_lr_callback = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=3, min_lr=1e-6, verbose=1)
+    callbacks_list.append(reduce_lr_callback)
 
     # to save only the best model
 

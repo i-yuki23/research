@@ -1,5 +1,6 @@
 from keras.optimizers import Adam
 from keras.callbacks import EarlyStopping, ModelCheckpoint
+from keras.callbacks import ReduceLROnPlateau
 from custom_losses.dice import dice_coefficient
 from lib.helper import remove_all_checkpoints
 import os
@@ -28,7 +29,9 @@ def train_func(x_train, y_train, x_val, y_val, x_test, y_test, input_shape, mode
         mode='max',
         save_best_only=True)
         callbacks_list.append(model_checkpoint_callback)
-        
+
+    reduce_lr_callback = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=3, min_lr=1e-6, verbose=1)
+    callbacks_list.append(reduce_lr_callback)
     
     if class_weight:
          clf_hist = clf.fit(x_train, y_train, class_weight=class_weight,validation_data=(x_val, y_val), epochs=epochs, batch_size=batch_size,callbacks=callbacks_list, verbose=verbose)
