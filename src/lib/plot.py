@@ -1,17 +1,29 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-def plot_histogram(data, data2, title):
-    bins = range(min(min(data), min(data2)), max(max(data), max(data2)) + 2)
-    plt.hist(data, bins=bins, align='left', color='skyblue', edgecolor='black')
+def plot_histogram(data, bins=10, title='Histogram', xlabel='Value', ylabel='Frequency'):
+    """
+    Plot a histogram for the given data.
 
-    # Set titles and labels
+    Parameters:
+    data (np.ndarray): Input data for the histogram.
+    bins (int or sequence): Number of bins or a sequence defining the bin edges.
+    title (str): Title of the plot.
+    xlabel (str): Label for the x-axis.
+    ylabel (str): Label for the y-axis.
+
+    Returns:
+    None
+    """
+    if not isinstance(data, np.ndarray):
+        raise ValueError("Input data should be a NumPy array")
+    
+    plt.figure(figsize=(10, 6))
+    plt.hist(data, bins=bins, edgecolor='black')
     plt.title(title)
-    plt.xlabel('Value')
-    plt.ylabel('Frequency')
-    # plt.xticks(np.arange(0, 70, 10)) # １刻みにしても見にくいので２刻みにします
-    # plt.yticks(np.arange(0, 310, 50)) # １刻みにしても見にくいので２刻みにします
-    # Show histogram
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.grid(True)
     plt.show()
 
 def plot_learning_curve(hist, title_fontsize=18, fontsize=14):

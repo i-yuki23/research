@@ -6,10 +6,11 @@ from lib.helper import make_dir
 
 class PredictionAnalyzer:
 
-    def __init__(self, protein_name, apo_name, holo_name, optimal_threshold=0.5):
+    def __init__(self, protein_name, apo_name, holo_name, output_dir, optimal_threshold=0.5):
         self.protein_name = protein_name
         self.apo_name = apo_name
         self.holo_name = holo_name
+        self.output_dir = output_dir
         self.optimal_threshold = optimal_threshold
 
     def set_prediction_and_predicted_labels(self, prediction):
@@ -31,7 +32,7 @@ class PredictionAnalyzer:
         labels = ["pos", "neg"]
         ids_list = [pos_water_ids, neg_water_ids]
         for label, water_ids in zip(labels, ids_list):
-            output_path = f"/mnt/ito/test/{self.protein_name}/predicted_labeled_water/{self.holo_name}/{label}_pred_O_placed_{self.apo_name}_3.0.pdb"
+            output_path = self.output_dir + f"{label}_pred_O_placed_{self.apo_name}_3.0.pdb"
             input_path = get_test_water_path(self.protein_name, self.apo_name)
             # Process the predicted data to filter and create a new PDB for each label type
             make_dir(output_path)

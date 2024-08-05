@@ -41,7 +41,7 @@ print('Val data shape: ', val_data.shape)
 print('Val labels shape: ', val_labels.shape)
 
 input_shape = (DATA_VOXEL_NUM*2+1, DATA_VOXEL_NUM*2+1, DATA_VOXEL_NUM*2+1, train_data.shape[-1])
-epochs = 200
+epochs = 300
 batch_size = 128
 n_base = 16
 learning_rate = 1e-4

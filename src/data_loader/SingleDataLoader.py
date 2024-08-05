@@ -41,6 +41,11 @@ class SingleDataLoader(DataLoader):
             # data_reshaped = tf.transpose(data, [0, 2, 3, 4, 1])
         return data, labels
     
+    def load_data_with_pdb_array(self, pdb_array):
+        data, labels = self._get_data(pdb_array)
+        # data_reshaped = tf.transpose(data, [0, 2, 3, 4, 1])
+        return data, labels
+    
     def get_test_data_and_water_ids(self, pdb_name, dis_or_non):
         test_data_dir = os.path.join(self.training_data_dir, dis_or_non)
         

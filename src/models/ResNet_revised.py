@@ -25,14 +25,14 @@ def resnet_block(input_tensor, n_base, dilation_rate=1, strides=1, BN=True):
     return x
 
 
-def ResNet_revised(n_base, input_shape, learning_rate, loss, metrics, class_num=1, dropout=0.4, BN=True, Sdropout="", resnet_block_num=6):
+def ResNet_revised(n_base, input_shape, learning_rate, loss, metrics, class_num=1, dropout=0.4, BN=True, Sdropout="", resnet_block_num=3):
     inputs = Input(shape=input_shape)
     
     # Initial Conv3D layer
     x = Conv3D(n_base, kernel_size=1, strides=1, padding='same')(inputs)
 
     # ResNet blocks with dilated convolutions
-    dilation_rates = [1, 2, 3]  # Example of using multiple dilation rates
+    dilation_rates = [1, 1, 1]  # Example of using multiple dilation rates
     for i in range(resnet_block_num):
         dilation_rate = dilation_rates[i % len(dilation_rates)]
         x = resnet_block(x, n_base, strides=1, dilation_rate=dilation_rate, BN=BN)
@@ -45,9 +45,9 @@ def ResNet_revised(n_base, input_shape, learning_rate, loss, metrics, class_num=
     x = Dense(n_base * 8, activation='elu')(x)
     if dropout:
         x = Dropout(dropout)(x)
-    x = Dense(n_base * 4, activation='elu')(x)
-    if dropout:
-        x = Dropout(dropout)(x)
+    # x = Dense(n_base * 4, activation='elu')(x)
+    # if dropout:
+    #     x = Dropout(dropout)(x)
 
     outputs = Dense(class_num, activation='sigmoid')(x)
     

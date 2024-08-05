@@ -12,11 +12,15 @@ from lib.helper import get_latest_checkpoint
 from custom_losses.dice import dice_coefficient
 from tensorflow.keras.metrics import Recall, Precision
 from tensorflow.keras.losses import BinaryCrossentropy
+import tensorflow as tf
+
+# GPUを無効化
+tf.config.set_visible_devices([], 'GPU')
 
 def main():
-    protein_name = 'CDK2'
-    apo_name = "1pw2"
-    holo_name = '1pxi'
+    protein_name = 'WD5'
+    apo_name = "2h14"
+    holo_name = '3smrA'
     test_dir = f'/mnt/ito/test/{protein_name}/test_data/'
     model_func = ResNet
 
@@ -39,13 +43,15 @@ def main():
         "BN" : True
     }
 
+    output_dir = f"/mnt/ito/test/{protein_name}/predicted_labeled_water/{holo_name}/{settings['CLASSIFYING_RULE']}/"
+
     model = model_func(**model_params)
     checkpoint_dir = get_checkpoints_dir(**settings)
     latest_checkpoint = get_latest_checkpoint(checkpoint_dir)
 
     test_data_loader = TestDataLoader(test_dir, holo_name)
     prediction_executor = PredictionExecutor(model, latest_checkpoint)
-    prediction_analyzer = PredictionAnalyzer(protein_name, apo_name, holo_name, optimal_threshold=0.5)
+    prediction_analyzer = PredictionAnalyzer(protein_name, apo_name, holo_name, output_dir, optimal_threshold=0.5)
 
     unkown_protein_predictor = UnkownProteinPredictor(
         test_data_loader=test_data_loader,
