@@ -1,3 +1,5 @@
+# Ligand Pocketの平均SASAを計算する
+
 import sys
 sys.path.append('../..')
 
