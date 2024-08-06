@@ -32,7 +32,7 @@ class LigandBuriednessCalculator:
 
     def calculate_buriedness(self) -> float:
         buriedness = (self.ligand_sasa + self.protein_sasa - self.complex_sasa) / self.ligand_sasa
-        return buriedness, self.ligand_sasa, self.protein_sasa, self.complex_sasa
+        return buriedness
 
 
 

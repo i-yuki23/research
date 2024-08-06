@@ -36,7 +36,12 @@ def combine_pdb_files(pdb_file1, pdb_file2, output_file):
             else:
                 residue_seq = max_residue_seq + 1
                 max_residue_seq += 1
-            updated_line = f"{line[:6]}{atom_serial:5}{line[11:22]}{residue_seq:4}{line[26:]}"
+
+            updated_line = f"{line[:6]}{atom_serial:5}{line[11:17]}{'LIG':>3}{line[20:22]}{residue_seq:4}{line[26:]}"
+            symbol = line[76:78].strip()
+            if symbol == 'A':
+                symbol = ' C'
+                updated_line = updated_line[:76] + symbol + updated_line[78:]
             updated_pdb2_lines.append(updated_line)
         elif line.startswith('TER'):
             # updated_line = f"{line[:6]}{int(line[6:11]):5} {line[11:]}".rstrip() + '\n'
@@ -54,6 +59,6 @@ protein_names = get_all_pdb_names()
 
 for pdb_name in protein_names:
     output_path = f'/home/ito/research/data/protein_ligand_complex/{pdb_name}/{pdb_name}_complex.pdb'
-    make_dir(output_path)
+    # make_dir(output_path)
     combine_pdb_files(get_protein_path(pdb_name), get_ligand_path(pdb_name), output_path)
 
