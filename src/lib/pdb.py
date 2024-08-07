@@ -164,6 +164,9 @@ def get_all_pdb_names():
     dir_path = get_nas_data_dir()
     return [pdb_name for pdb_name in os.listdir(dir_path) if os.path.isdir(os.path.join(dir_path, pdb_name))]
 
+def get_pdb_names_by_txt(txt_path):
+    with open(txt_path, 'r') as f:
+        return f.read().splitlines()
 
 def get_clusters_from_pdb(path_to_pdb, type="HETATM"):
     """

@@ -39,16 +39,16 @@ ligand_resname = 'LIG'
 
 ligand_sasa_list = []
 for pdb_name in get_all_pdb_names():
-    pdb_name = '4lkk'
+    # pdb_name = '4lkk'
     print(pdb_name)
     sasa_calculator = LigandSASACalculator(
         f'../../../data/protein_ligand_complex/{pdb_name}/{pdb_name}_complex.pdb',
-        get_ligand_path(pdb_name),
+        f'../../../data/protein_ligand_complex/{pdb_name}/{pdb_name}_ligand.pdb',
         ligand_resname
     )
     ligand_sasa = sasa_calculator.calculate_ligand_sasa()
     ligand_sasa_list.append(ligand_sasa)
     print(ligand_sasa)
-    break
+    # break
 
 np.save('ligand_sasa.npy', np.array(ligand_sasa_list))

@@ -6,13 +6,7 @@ import numpy as np
 import os
 
 LIGAND_POCKET_VOXEL_NUM = 8
-excluded_protein_list = ['184l', '185l', '186l', '187l', '188l', '1a28', '2p2a', '1xap',
-                        '5t0t', '5tbm', '4xaq', '1lgw', '1dzk', '1e3g', '4zv1', '4omk',
-                        '4p6w', '4poj', '3iod', '3f78', '1fcz', '1fd0', '1n46', '4kwf',
-                        '2w8y', '3f3c', '3f3d', '3b5r', '3uex', '4ykj', '1rjk', '1s19',
-                        '1sr7', '4v24', '4w52', '4pp5', '5hcv', '1kdk', '1l83', '3ctt',
-                        '5l7g', '5l7h', '3b65', '3b66', '4xt2', '1u1w', '1usk', '1i37',
-                        '1ie9', '4m8e', '1qkt', '1z95', '2o4j', '2o4r', '1ajn']
+included_protein_list = 
 
 def get_water0_pdb(pdb_names):
 
@@ -32,13 +26,10 @@ def get_water0_pdb(pdb_names):
 
     return water_0_pdb
 
-pdb_names = get_all_pdb_names()
-# water_0_pdb = get_water0_pdb(pdb_names)
-
 exsheet = pd.ExcelFile('clusterNum.xlsx')
 exsheet_df = exsheet.parse(exsheet.sheet_names[0])
 # filtered_exsheet_df = exsheet_df[~exsheet_df['PDB'].isin(water_0_pdb)]
-filtered_exsheet_df = exsheet_df[~exsheet_df['PDB'].isin(excluded_protein_list)]
+filtered_exsheet_df = exsheet_df[exsheet_df['PDB'].isin(included_protein_list)]
 exsheet_array = filtered_exsheet_df.values
 
 cluster_num = filtered_exsheet_df["Cluster Num"][:]
