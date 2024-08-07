@@ -8,7 +8,7 @@ def combine_pdb_files(pdb_file1, pdb_file2, output_file):
     def read_pdb(file_path):
         with open(file_path, 'r') as file:
             lines = file.readlines()
-        return [line for line in lines if line.startswith(('ATOM', 'HETATM'))]
+        return [line for line in lines if line.startswith(('ATOM'))]
 
     def write_pdb(lines, output_path):
         with open(output_path, 'w') as file:
@@ -22,13 +22,13 @@ def combine_pdb_files(pdb_file1, pdb_file2, output_file):
     pdb2_lines = read_pdb(pdb_file2)
 
     # Get max atom serial and residue sequence number from pdb1
-    max_atom_serial = max(int(line[6:11]) for line in pdb1_lines if line.startswith(('ATOM', 'HETATM')))
-    max_residue_seq = max(int(line[22:26].strip()) for line in pdb1_lines if line.startswith(('ATOM', 'HETATM')))
+    max_atom_serial = max(int(line[6:11]) for line in pdb1_lines if line.startswith(('ATOM')))
+    max_residue_seq = max(int(line[22:26].strip()) for line in pdb1_lines if line.startswith(('ATOM')))
 
     # Adjust atom serial numbers and residue sequence numbers for pdb2
     updated_pdb2_lines = []
     for line in pdb2_lines:
-        if line.startswith(('ATOM', 'HETATM')):
+        if line.startswith(('ATOM')):
             atom_serial = int(line[6:11].strip()) + max_atom_serial
             residue_seq_str = line[22:26].strip()
             if residue_seq_str:
@@ -58,7 +58,7 @@ def combine_pdb_files(pdb_file1, pdb_file2, output_file):
 protein_names = get_all_pdb_names()
 
 for pdb_name in protein_names:
-    output_path = f'/home/ito/research/data/protein_ligand_complex/{pdb_name}/{pdb_name}_complex.pdb'
+    output_path = f'/home/ito/research/data/protein_ligand_complex/{pdb_name}/{pdb_name}_multi_pro_complex.pdb'
     # make_dir(output_path)
-    combine_pdb_files(get_protein_path(pdb_name), get_ligand_path(pdb_name), output_path)
+    combine_pdb_files(f'/mnt/ito/pdbbind_raw/refined_set/{pdb_name}/{pdb_name}_protein.pdb', get_ligand_path(pdb_name), output_path)
 

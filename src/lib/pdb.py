@@ -11,6 +11,7 @@ ATOMIC_ID_START = 7
 ATOMIC_ID_END = 11
 ATOMIC_SYMBOL_POS_START = 76
 ATOMIC_SYMBOL_POS_END = 78
+CHAIN_NAME_POS = 21
 
 def get_coords(line):
     return [float(line[ATOM_COORD_START:ATOM_COORD_START+8].strip()),        
@@ -34,8 +35,6 @@ def get_coordinates_from_pdb(path_to_pdb, exclude_hydrogens=True, type="ATOM"):
     coords_list = []
     with open(path_to_pdb, 'r') as f:
         for line in f:
-            # if line.startswith("TER"):
-            #     break
             if line.startswith(type):
                 if type == "ATOM" and exclude_hydrogens and line[ATOMIC_SYMBOL_POS_START:ATOMIC_SYMBOL_POS_END].strip() == 'H':
                     continue
@@ -43,6 +42,29 @@ def get_coordinates_from_pdb(path_to_pdb, exclude_hydrogens=True, type="ATOM"):
                 coords_list.append(coords)
                 
     return np.array(coords_list, dtype="float64")
+
+def get_chains_coordinates(path_to_pdb, exclude_hydrogens=True, type="ATOM"):
+    chains_coords_list = []
+    coords_list = []
+    chain_name = None
+    with open(path_to_pdb, 'r') as f:
+        for line in f:
+            if line.startswith(type):
+                if exclude_hydrogens and line[ATOMIC_SYMBOL_POS_START:ATOMIC_SYMBOL_POS_END].strip() == 'H':
+                    continue
+                current_chain_name = line[CHAIN_NAME_POS]
+                if chain_name is None:
+                    chain_name = current_chain_name
+                if current_chain_name == chain_name:
+                    coords_list.append(get_coords(line))
+                else:
+                    chains_coords_list.append(np.array(coords_list))
+                    coords_list = [get_coords(line)]
+                    chain_name = current_chain_name
+        if coords_list:
+            chains_coords_list.append(np.array(coords_list))
+                
+    return chains_coords_list
 
 def get_ligand_coordinates_from_pdb(path_to_pdb):
     """
