@@ -1,37 +1,19 @@
 import sys
 sys.path.append('..')
-from lib.pdb import get_atom_id_from_pdb, get_all_pdb_names
+from lib.pdb import get_atom_id_from_pdb, get_pdb_names_by_txt 
 import pandas as pd
 import numpy as np
 import os
 
 LIGAND_POCKET_VOXEL_NUM = 8
-included_protein_list = 
-
-def get_water0_pdb(pdb_names):
-
-    def count_water_number(pdb_file):
-        ids = get_atom_id_from_pdb(pdb_file)
-        return len(ids)
-    
-    water_0_pdb = []
-    for pdb_name in pdb_names:
-        base_path = f'../../data/LIGAND_POCKET_VOXEL_NUM_{LIGAND_POCKET_VOXEL_NUM}/labeled_water/'
-        file_path = f'{pdb_name}/pred_O_placed_{pdb_name}_3.0.pdb'
-
-        displaceable_water_num = count_water_number(os.path.join(base_path, 'displaceable/', file_path))
-        non_displaceable_water_num = count_water_number(os.path.join(base_path, 'non_displaceable/', file_path))
-        if displaceable_water_num == 0 and non_displaceable_water_num == 0:
-            water_0_pdb.append(pdb_name)
-
-    return water_0_pdb
+included_protein_list = get_pdb_names_by_txt('/home/ito/research/data/valid_proteins.txt')
 
 exsheet = pd.ExcelFile('clusterNum.xlsx')
 exsheet_df = exsheet.parse(exsheet.sheet_names[0])
-# filtered_exsheet_df = exsheet_df[~exsheet_df['PDB'].isin(water_0_pdb)]
 filtered_exsheet_df = exsheet_df[exsheet_df['PDB'].isin(included_protein_list)]
 exsheet_array = filtered_exsheet_df.values
-
+print(exsheet_array[np.isin(exsheet_array ,'3ppm')])
+print(len(exsheet_array))
 cluster_num = filtered_exsheet_df["Cluster Num"][:]
 cluster_protein_counts = np.bincount(cluster_num) # それぞれのクラスターに何個のたんぱく質があるか
 
@@ -63,11 +45,11 @@ for cluster_index in sorted_clusters:
         proteins_b.append(cluster_protein_counts[cluster_index])
 
 # 結果を出力
-print("Group A clusters:", clusters_a)
+# print("Group A clusters:", clusters_a)
 print("Group A cluster kinds:", len(clusters_a))
 print("Group A protein count:", sum(proteins_a))
 
-print("Group B clusters:", clusters_b)
+# print("Group B clusters:", clusters_b)
 print("Group B cluster kinds:", len(clusters_b))
 print("Group B protein count:", sum(proteins_b))
 
@@ -86,7 +68,7 @@ for data in exsheet_array:
             test.append(data[1])
 
 # %%
-with open("train.txt", mode = "w") as f:
+with open("/home/ito/research/data/valid_train.txt", mode = "w") as f:
     for pdb in train:
         f.write(pdb+"\n")
 
@@ -128,11 +110,11 @@ for index, cluster_index in enumerate(sorted_clusters):
         proteins_val.append(counts_train[index])
 
 # 結果を出力
-print("Group train clusters:", clusters_train)
+# print("Group train clusters:", clusters_train)
 print("Group train cluster kinds:", len(clusters_train))
 print("Group train protein count:", sum(proteins_train))
 
-print("Group val clusters:", clusters_val)
+# print("Group val clusters:", clusters_val)
 print("Group val cluster kinds:", len(clusters_val))
 print("Group val protein count:", sum(proteins_val))
 
@@ -150,11 +132,11 @@ for data in exsheet_array:
         if data[3] == val_index:
             val.append(data[1])
 
-with open("val.txt", mode = "w") as f:
+with open("/home/ito/research/data/valid_val.txt", mode = "w") as f:
     for PDB in train:
         f.write(PDB+"\n")
         
-with open("test.txt", mode = "w") as f:
+with open("/home/ito/research/data/valid_test.txt", mode = "w") as f:
     for PDB in val:
         f.write(PDB+"\n")
 

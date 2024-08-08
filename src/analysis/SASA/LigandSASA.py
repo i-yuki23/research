@@ -3,7 +3,7 @@ sys.path.append('../..')
 
 import freesasa
 from lib.path import get_protein_path, get_ligand_path
-from lib.pdb import get_all_pdb_names
+from lib.pdb import get_pdb_names_by_txt
 import numpy as np
 from typing import Tuple
 
@@ -36,9 +36,10 @@ class LigandSASACalculator:
 
 # リガンドの残基名（例: 'LIG'）
 ligand_resname = 'LIG'
+pdb_names = get_pdb_names_by_txt('/home/ito/research/data/valid_protein.txt')
 
 ligand_sasa_list = []
-for pdb_name in get_all_pdb_names():
+for pdb_name in pdb_names:
     # pdb_name = '4lkk'
     print(pdb_name)
     sasa_calculator = LigandSASACalculator(
