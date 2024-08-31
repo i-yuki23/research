@@ -34,7 +34,7 @@ class VoxelDataExtractor:
         test_data = self.__extract_test_voxel_data(water_coords)
 
         for index, one_test_data in enumerate(test_data):
-            save_path = f"/mnt/ito/test/{self.protein_name}/test_data/" + self.holo_name + f"/water_id_{water_ids[index]}.npy"
+            save_path = f"/mnt/ito/test/{self.protein_name}/test_data/{self.apo_name}/{self.holo_name}/water_id_{water_ids[index]}.npy"
             make_dir(save_path)
             np.save(save_path, one_test_data[:, :, :, :])
 

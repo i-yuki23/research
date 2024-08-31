@@ -20,7 +20,7 @@ def copy_holo_files(protein_name, apo_name, holo_name, classifying_rule):
     # Define source and destination paths
     holo_source_folder = f"/mnt/ito/test/{protein_name}/holo/{holo_name}"
     prediction_folder = f"/mnt/ito/test/{protein_name}/predicted_labeled_water/{holo_name}/{classifying_rule}"
-    dest_folder = f"/mnt/ito/test/{protein_name}/data_folder/{apo_name}/{holo_name}"
+    dest_folder = f"/mnt/ito/test/{protein_name}/data_folder/{classifying_rule}/{apo_name}/{holo_name}"
     
     # Create destination folder if it doesn't exist
     os.makedirs(dest_folder, exist_ok=True)

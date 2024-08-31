@@ -7,7 +7,7 @@ from Class.TrainingDataCreator.TrainingDataCreatorProtein import TrainingDataCre
 
 
 LIGNAD_POCKET_VOXEL_NUM = 8
-CLASSIFYING_RULE = "WaterClassifyingRuleEmbedding"
+CLASSIFYING_RULE = "WaterClassifyingRuleSurface"
 LIGAND_POCKET_DEFINER = "LigandPocketDefinerOriginal"
 DATA_VOXEL_NUM = 10
 

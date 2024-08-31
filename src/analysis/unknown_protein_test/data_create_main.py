@@ -6,7 +6,7 @@ from lib.path import get_test_gr_path
 
 def main():
     protein_name = 'CDK2'
-    apo_name = "1pw2"
+    apo_name = "1hcl"
     holo_name = '1pxi'
     ligand_voxel_num = 8
     data_voxel_num = 10

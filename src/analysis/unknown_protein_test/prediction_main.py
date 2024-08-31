@@ -18,7 +18,7 @@ import tensorflow as tf
 # GPUを無効化
 tf.config.set_visible_devices([], 'GPU')
 
-def predict(protein_name, apo_name, holo_name, model_func, settings, model_params):
+def predict(protein_name, apo_name, holo_name, model_func, settings, model_params, optimal_threshold):
 
     output_dir = f"/mnt/ito/test/{protein_name}/predicted_labeled_water/{holo_name}/{settings['CLASSIFYING_RULE']}/"
 
@@ -26,10 +26,10 @@ def predict(protein_name, apo_name, holo_name, model_func, settings, model_param
     checkpoint_dir = get_checkpoints_dir(**settings)
     latest_checkpoint = get_latest_checkpoint(checkpoint_dir)
 
-    test_dir = f'/mnt/ito/test/{protein_name}/test_data/'
+    test_dir = f'/mnt/ito/test/{protein_name}/test_data/{apo_name}/'
     test_data_loader = TestDataLoader(test_dir, holo_name)
     prediction_executor = PredictionExecutor(model, latest_checkpoint)
-    prediction_analyzer = PredictionAnalyzer(protein_name, apo_name, holo_name, output_dir, optimal_threshold=0.5)
+    prediction_analyzer = PredictionAnalyzer(protein_name, apo_name, holo_name, output_dir, optimal_threshold=optimal_threshold)
 
     unkown_protein_predictor = UnkownProteinPredictor(
         test_data_loader=test_data_loader,
@@ -62,6 +62,7 @@ if __name__ == '__main__':
         "metrics" : ['accuracy', dice_coefficient, Recall(), Precision()], 
         "BN" : True
     }
+    optimal_threshold = 0.45
 
     protein_names = ['CDK2', 'WD5']
     apo_names = {'CDK2' : ['1hcl', '1pw2'], 'WD5' : ['2h14']}
@@ -70,4 +71,4 @@ if __name__ == '__main__':
     for protein_name in protein_names:
         for apo_name in apo_names[protein_name]:
             for holo_name in holo_names[protein_name]:
-                predict(protein_name=protein_name, apo_name=apo_name, holo_name=holo_name, model_func=model_func, settings=settings, model_params=model_params)
+                predict(protein_name=protein_name, apo_name=apo_name, holo_name=holo_name, model_func=model_func, settings=settings, model_params=model_params, optimal_threshold=optimal_threshold)

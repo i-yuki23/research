@@ -36,9 +36,8 @@ class LigandBuriednessCalculator:
 
 
 
-ave_sasa_list = []
+ligand_buriedness_list = []
 for pdb_name in get_all_pdb_names():
-    pdb_name = '10gs'
     averageSASA_calculator = LigandBuriednessCalculator(get_protein_path(pdb_name), get_ligand_path(pdb_name), f'../../../data/protein_ligand_complex/{pdb_name}/{pdb_name}_complex.pdb')
     ave_sasa_list.append(averageSASA_calculator.calculate_buriedness())
     print(ave_sasa_list)

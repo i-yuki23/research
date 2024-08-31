@@ -76,7 +76,7 @@ def main():
             for ligand_pocket_definer_name in ligand_pocket_definer_names:
                 for pdb_name in pdb_names:
 
-                    # pdb_name = '2d3u'
+                    # pdb_name = '4lkk'
                     # ligand_pocket_definer_name = 'LigandPocketDefinerOriginal'
                     # classifying_rule_name = 'WaterClassifyingRuleSurface'
                     # ligand_voxel_num = 10
