@@ -1,7 +1,7 @@
 import sys
 import os
 sys.path.append('..')
-from lib.path import get_training_data_dir, get_predicted_labeled_water_path, get_displaceable_water_path, get_non_displaceable_water_path
+from lib.path import get_training_data_dir, get_predicted_labeled_water_path, get_water_path
 from lib.pdb import filter_atoms_and_create_new_pdb, get_pdb_names_by_txt
 from data_loader.SingleDataLoader import SingleDataLoader
 from models.ResNet import ResNet
@@ -27,13 +27,11 @@ def extract_ids(labels, ids_array, condition):
     return ids_array[indices]
 
 # Define the parameters
-DATA_TYPE1 = 'gr'
-# DATA_TYPE2 = 'Protein'
-DATA_TYPE = f"{DATA_TYPE1}_{DATA_TYPE2}" if 'DATA_TYPE2' in locals() else DATA_TYPE1
+DATA_TYPE = 'gr'
 is_augmented = True
 
 DATA_VOXEL_NUM = 10
-CLASSIFYING_RULE = 'WaterClassifyingRuleEmbedding'
+CLASSIFYING_RULE = 'WaterClassifyingRuleSurface'
 LIGAND_POCKET_DEFINER = 'LigandPocketDefinerOriginal'
 LIGAND_VOXEL_NUM = 8
 
@@ -56,13 +54,13 @@ model.load_weights(latest_checkpoint)
 
 
 # Load the test data
-training_data_dir1 = get_training_data_dir(DATA_TYPE1, DATA_VOXEL_NUM, CLASSIFYING_RULE, LIGAND_POCKET_DEFINER, LIGAND_VOXEL_NUM)
+training_data_dir1 = get_training_data_dir(DATA_TYPE, DATA_VOXEL_NUM, CLASSIFYING_RULE, LIGAND_POCKET_DEFINER, LIGAND_VOXEL_NUM)
 # training_data_dir2 = get_training_data_dir(DATA_TYPE2, DATA_VOXEL_NUM, CLASSIFYING_RULE, LIGAND_POCKET_DEFINER, LIGAND_VOXEL_NUM)
 
 # # For single data
 data_loader = SingleDataLoader(training_data_dir1)
 
-pdb_names = get_pdb_names_by_txt('../../data/valid_test.txt')
+pdb_names = get_pdb_names_by_txt('../../data/valid_val.txt')
 
 for pdb_name in pdb_names:
     test_data_displaceable, dis_water_ids = data_loader.get_test_data_and_water_ids(pdb_name, 'displaceable')
@@ -89,22 +87,19 @@ for pdb_name in pdb_names:
     labels = ['displaceable', 'non_displaceable']
     ids_list = [water_ids_dis, water_ids_non]
 
+    input_path = get_water_path(pdb_name)
 
     output_path_dis = get_predicted_labeled_water_path(DATA_TYPE, pdb_name, DATA_VOXEL_NUM, LIGAND_VOXEL_NUM,
                                                     CLASSIFYING_RULE, LIGAND_POCKET_DEFINER, MODEL_NAME, labels[0], is_augmented)
-    input_path_dis = get_displaceable_water_path(pdb_name, LIGAND_VOXEL_NUM, CLASSIFYING_RULE, LIGAND_POCKET_DEFINER)
-
     # Process the predicted data to filter and create a new PDB for each label type
-    filter_atoms_and_create_new_pdb(input_path_dis, output_path_dis, ids_list[0])
+    filter_atoms_and_create_new_pdb(input_path, output_path_dis, ids_list[0])
 
 
 
     output_path_non = get_predicted_labeled_water_path(DATA_TYPE, pdb_name, DATA_VOXEL_NUM, LIGAND_VOXEL_NUM,
                                                     CLASSIFYING_RULE, LIGAND_POCKET_DEFINER, MODEL_NAME, labels[1], is_augmented)
-    input_path_non = get_non_displaceable_water_path(pdb_name, LIGAND_VOXEL_NUM, CLASSIFYING_RULE, LIGAND_POCKET_DEFINER)
 
     # Process the predicted data to filter and create a new PDB for each label type
-    filter_atoms_and_create_new_pdb(input_path_non, output_path_non, ids_list[1])
-
+    filter_atoms_and_create_new_pdb(input_path, output_path_non, ids_list[1])
 
 
