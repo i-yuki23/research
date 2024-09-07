@@ -30,7 +30,7 @@ def resnet_block(input_tensor, n_base, strides=1, BN=False):
     return x
 
 
-def ResNet(n_base, input_shape, learning_rate, loss, metrics, class_num=1, dropout=0.4, BN=True, Sdropout=""):
+def ResNet(n_base, input_shape, learning_rate, loss, metrics, class_num, dropout=0.4, BN=True, Sdropout=""):
     inputs = Input(shape=input_shape)
     
     # Initial Conv3D layer
@@ -56,7 +56,10 @@ def ResNet(n_base, input_shape, learning_rate, loss, metrics, class_num=1, dropo
     x = Dense(n_base*4, activation='relu')(x)
     if dropout:
         x = Dropout(dropout)(x)
-    outputs = Dense(class_num, activation='sigmoid')(x)
+    if class_num == 1:
+        outputs = Dense(class_num, activation='sigmoid')(x)
+    else:
+        outputs = Dense(class_num, activation='softmax')(x)
     
     model = Model(inputs, outputs)
     

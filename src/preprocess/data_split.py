@@ -67,10 +67,10 @@ for data in exsheet_array:
         if data[3] == b_index:
             test.append(data[1])
 
-# %%
-with open("/home/ito/research/data/valid_train.txt", mode = "w") as f:
-    for pdb in train:
-        f.write(pdb+"\n")
+# # %%
+# with open("/home/ito/research/data/valid_train.txt", mode = "w") as f:
+#     for pdb in train:
+#         f.write(pdb+"\n")
 
 # ### 上と同様にtestをtestとvalに分ける
 
@@ -119,25 +119,25 @@ print("Group val cluster kinds:", len(clusters_val))
 print("Group val protein count:", sum(proteins_val))
 
 # %%
-train = []
-val = []
+# train = []
+# val = []
 
-for data in exsheet_array:
-    for train_index in clusters_train:
-        if data[3] == train_index:
-            train.append(data[1])
+# for data in exsheet_array:
+#     for train_index in clusters_train:
+#         if data[3] == train_index:
+#             train.append(data[1])
             
-for data in exsheet_array:
-    for val_index in clusters_val:
-        if data[3] == val_index:
-            val.append(data[1])
+# for data in exsheet_array:
+#     for val_index in clusters_val:
+#         if data[3] == val_index:
+#             val.append(data[1])
 
-with open("/home/ito/research/data/valid_val.txt", mode = "w") as f:
-    for PDB in train:
-        f.write(PDB+"\n")
+# with open("/home/ito/research/data/valid_val.txt", mode = "w") as f:
+#     for PDB in train:
+#         f.write(PDB+"\n")
         
-with open("/home/ito/research/data/valid_test.txt", mode = "w") as f:
-    for PDB in val:
-        f.write(PDB+"\n")
+# with open("/home/ito/research/data/valid_test.txt", mode = "w") as f:
+#     for PDB in val:
+#         f.write(PDB+"\n")
 
 

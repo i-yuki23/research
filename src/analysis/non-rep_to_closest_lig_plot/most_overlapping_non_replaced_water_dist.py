@@ -1,3 +1,5 @@
+
+
 import sys
 sys.path.append('../..')
 from lib.pdb import get_coordinates_from_pdb, get_atoms_coords_for_each_atom_type, get_pdb_names_by_txt
@@ -29,8 +31,11 @@ def get_most_overlaping_non_replaced_water(water_coords, ligand_coords_for_each_
     max_overlap_list = []
     for water_coord in water_coords:
         for atom_type in ligand_coords_for_each_atom_type.keys():
-            max_overlap = max(max_overlap, cal_dist_overlap_dist([water_coord], ligand_coords_for_each_atom_type[atom_type], atom_type))
-        max_overlap_list.append(max_overlap)
+            if len(ligand_coords_for_each_atom_type[atom_type]) != 0:
+                max_overlap = max(max_overlap, cal_dist_overlap_dist([water_coord], ligand_coords_for_each_atom_type[atom_type], atom_type))
+            else:
+                max_overlap = None
+            max_overlap_list.append(max_overlap)
     return max_overlap_list
 
 def main():
@@ -44,7 +49,6 @@ def main():
 
         ligand_path = get_ligand_path(pdb_name)
         ligand_coords_for_each_atom_type = get_atoms_coords_for_each_atom_type(ligand_path)
-
         most_overlapping_non_replaced_water = get_most_overlaping_non_replaced_water(predicted_non_replaced_water_coords, ligand_coords_for_each_atom_type)
         most_overlapping_non_replaced_water_list.append(most_overlapping_non_replaced_water)
     most_overlapping_non_replaced_water_array = np.concatenate(most_overlapping_non_replaced_water_list, axis=0)

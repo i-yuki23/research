@@ -26,9 +26,9 @@ def plot_histogram(data, bins=10, title='Histogram', xlabel='Value', ylabel='Fre
     plt.grid(True)
     plt.show()
 
-def plot_scatter(x, y, title="Scatter Plot", xlabel="X-axis", ylabel="Y-axis", color='blue', cmap=None, save_path=None):
+def plot_scatter(x, y, title="Scatter Plot", xlabel="X-axis", ylabel="Y-axis", color='blue', cmap=None, save_path=None, threshold=None):
     """
-    Draws a scatter plot.
+    Draws a scatter plot with an optional vertical threshold line.
 
     Parameters:
     - x: List or array-like, x-axis data points
@@ -39,6 +39,7 @@ def plot_scatter(x, y, title="Scatter Plot", xlabel="X-axis", ylabel="Y-axis", c
     - color: str or array-like, color of the points (default: "blue")
     - cmap: str or Colormap, Colormap for the points (default: None)
     - save_path: str, path to save the plot as an image (default: None)
+    - threshold: float, x-value for the vertical threshold line (default: None)
 
     Returns:
     - None
@@ -49,13 +50,21 @@ def plot_scatter(x, y, title="Scatter Plot", xlabel="X-axis", ylabel="Y-axis", c
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
     
+    # Plot colorbar if a colormap is provided
     if cmap:
         plt.colorbar(scatter)
-    
+
+    # Add vertical line if threshold is provided
+    if threshold is not None:
+        plt.axvline(x=threshold, color='red', linestyle='--', label=f'Threshold: {threshold}')
+        plt.legend()
+
+    # Save the plot to a file or display it
     if save_path:
         plt.savefig(save_path)
     else:
         plt.show()
+
 
 def plot_hist2d(x, y, bins=30, title="2D Histogram", xlabel="X-axis", ylabel="Y-axis", cmap='viridis', save_path=None):
     """

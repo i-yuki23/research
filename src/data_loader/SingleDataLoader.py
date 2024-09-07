@@ -38,8 +38,9 @@ class SingleDataLoader(DataLoader):
         with open(pdb_list_path, 'r') as f:
             pdb_list = f.read().splitlines()
             data, labels = self._get_data(pdb_list)
+            labels_one_hot = tf.one_hot(labels, 2)
             # data_reshaped = tf.transpose(data, [0, 2, 3, 4, 1])
-        return data, labels
+        return data, labels_one_hot
     
     def load_data_with_pdb_array(self, pdb_array):
         data, labels = self._get_data(pdb_array)

@@ -82,13 +82,14 @@ for pdb_name in pdb_names:
     prediction_score_FN = np.concatenate(prediction_score_FN, axis=0) if prediction_score_FN.size != 0 else prediction_score_FN
     prediction_score_TN = extract_prediction_array(predicted_labels_non_dis, prediction_non_displaceable, 0)
     prediction_score_TN = np.concatenate(prediction_score_TN, axis=0) if prediction_score_TN.size != 0 else prediction_score_TN
+    prediction_score_TN = np.full(len(prediction_score_TN), None) if prediction_score_TN.size != 0 else prediction_score_TN
 
     prediction_score_non = np.concatenate([prediction_score_TN, prediction_score_FN], axis=0)
     print(prediction_score_non)
     prediction_score_list.append(prediction_score_non)
     # exit()
 prediction_score_array = np.concatenate(prediction_score_list, axis=0)
-np.save(f"{CLASSIFYING_RULE}_prediction_score_array.npy", prediction_score_array)
+np.save(f"FN_{CLASSIFYING_RULE}_prediction_score_array.npy", prediction_score_array)
 print(prediction_score_array)
 
 
