@@ -2,7 +2,7 @@ import sys
 sys.path.append('..')
 
 import freesasa
-from lib.pdb import get_all_pdb_names
+from lib.pdb import get_pdb_names_by_txt
 import numpy as np
 import os
 import glob
@@ -37,10 +37,11 @@ class LigandSASACalculator:
 # リガンドの残基名（例: 'LIG'）
 ligand_resname = 'LIG'
 
-data_dir = "../../data/protein_ligand_complex/"
+data_dir = '/mnt/ito/pdbbind_raw/general_set/'
 
 valid_protein_list = []
-for pdb_name in get_all_pdb_names():
+pdb_names = get_pdb_names_by_txt('/mnt/ito/pdbbind_raw/general_set/INDEX/general_high_resolution_pdb_ids_without_ion.txt')
+for pdb_name in pdb_names:
     non_zero_sasa_num = 0
     print(pdb_name)
     chain_path = os.path.join(data_dir, f'{pdb_name}/chain_*.pdb')
@@ -49,7 +50,7 @@ for pdb_name in get_all_pdb_names():
 
         sasa_calculator = LigandSASACalculator(
             chain_path,
-            f'/home/ito/research/data/protein_ligand_complex/{pdb_name}/{pdb_name}_ligand.pdb',
+            f'/mnt/ito/pdbbind_raw/general_set/{pdb_name}/{pdb_name}_ligand.pdb',
             ligand_resname
         )
         ligand_sasa_diff = sasa_calculator.calculate_ligand_sasa()
@@ -62,6 +63,6 @@ for pdb_name in get_all_pdb_names():
 
 print(len(valid_protein_list))
 
-with open('/home/ito/research/data/valid_protein.txt', 'w') as f:
+with open('/home/ito/research/data/monomer_general_protein.txt', 'w') as f:
     for protein in valid_protein_list:
         f.write(protein + '\n')

@@ -23,6 +23,7 @@ DATA_VOXEL_NUM = 10
 CLASSIFYING_RULE = 'WaterClassifyingRuleEmbedding'
 LIGAND_POCKET_DEFINER = 'LigandPocketDefinerOriginal'
 LIGAND_VOXEL_NUM = 8
+epsilon = 0.2
 
 def apply_label_smoothing(labels, epsilon=0.1):
     num_classes = tf.shape(labels)[-1]
@@ -37,7 +38,7 @@ data_loader = SingleDataLoader(training_data_dir1)
 # data_loader = DoubleDataLoader(training_data_dir1, training_data_dir2)
 
 train_data, train_labels = data_loader.load_data(train_list)
-train_labels = apply_label_smoothing(train_labels) # label smoothing
+train_labels = apply_label_smoothing(train_labels, epsilon) # label smoothing
 test_data, test_labels = data_loader.load_data(test_list)
 val_data, val_labels = data_loader.load_data(val_list)
 

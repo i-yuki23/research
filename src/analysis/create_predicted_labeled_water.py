@@ -11,6 +11,10 @@ from custom_losses.dice import dice_loss, dice_coefficient
 from tensorflow.keras.metrics import Recall, Precision
 from sklearn.metrics import roc_curve
 import numpy as np
+import tensorflow as tf
+
+# GPUを無効化
+tf.config.set_visible_devices([], 'GPU')
 
 def calculate_optimal_threshold(test_data_label, prediction_values):
     fpr, tpr, thresholds = roc_curve(test_data_label, prediction_values)
@@ -31,7 +35,7 @@ DATA_TYPE = 'gr'
 is_augmented = True
 
 DATA_VOXEL_NUM = 10
-CLASSIFYING_RULE = 'WaterClassifyingRuleSurface'
+CLASSIFYING_RULE = 'WaterClassifyingRuleEmbedding'
 LIGAND_POCKET_DEFINER = 'LigandPocketDefinerOriginal'
 LIGAND_VOXEL_NUM = 8
 
@@ -44,11 +48,12 @@ learning_rate = 1e-4
 metrics = ['accuracy', dice_coefficient, Recall(), Precision()]
 BN = True
 optimal_threshold_youden = 0.45
+class_num = 2
 
 # Load the model and its weights
-checkpoint_dir = f'../checkpoints/valid/{DATA_TYPE}/data_voxel_num_{DATA_VOXEL_NUM}/{LIGAND_POCKET_DEFINER}/ligand_pocket_voxel_num_{LIGAND_VOXEL_NUM}/{CLASSIFYING_RULE}/{MODEL_NAME}/aug_train/'
+checkpoint_dir = f'../checkpoints/valid/smoothing/{DATA_TYPE}/data_voxel_num_{DATA_VOXEL_NUM}/{LIGAND_POCKET_DEFINER}/ligand_pocket_voxel_num_{LIGAND_VOXEL_NUM}/{CLASSIFYING_RULE}/{MODEL_NAME}/aug_train/'
 latest_checkpoint = get_latest_checkpoint(checkpoint_dir)
-model = model_func(n_base, input_shape, learning_rate, BinaryCrossentropy(), metrics, BN=BN)
+model = model_func(n_base, input_shape, learning_rate, BinaryCrossentropy(), metrics, BN=BN, class_num=class_num)
 model.load_weights(latest_checkpoint)
 
 
@@ -60,7 +65,7 @@ training_data_dir1 = get_training_data_dir(DATA_TYPE, DATA_VOXEL_NUM, CLASSIFYIN
 # # For single data
 data_loader = SingleDataLoader(training_data_dir1)
 
-pdb_names = get_pdb_names_by_txt('../../data/valid_val.txt')
+pdb_names = get_pdb_names_by_txt('../../data/valid_test.txt')
 
 for pdb_name in pdb_names:
     test_data_displaceable, dis_water_ids = data_loader.get_test_data_and_water_ids(pdb_name, 'displaceable')
@@ -68,12 +73,12 @@ for pdb_name in pdb_names:
     data_dir = '../../data'
 
     print(optimal_threshold_youden)
-    prediction_displaceable = model.predict(test_data_displaceable)
+    prediction_displaceable = model.predict(test_data_displaceable)[:, 1]
+
     predicted_labels_dis = custom_threshold(prediction_displaceable, optimal_threshold_youden)
 
-    prediction_non_displaceable = model.predict(test_data_non_displaceable)
+    prediction_non_displaceable = model.predict(test_data_non_displaceable)[:, 1]
     predicted_labels_non_dis = custom_threshold(prediction_non_displaceable, optimal_threshold_youden)
-
     # Extract IDs based on predictions for all conditions
     water_ids_TP = extract_ids(predicted_labels_dis, dis_water_ids, 1)
     water_ids_FN = extract_ids(predicted_labels_dis, dis_water_ids, 0)

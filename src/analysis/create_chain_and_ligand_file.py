@@ -1,7 +1,7 @@
 import sys
 sys.path.append('..')
 from lib.helper import make_dir
-from lib.pdb import get_all_pdb_names
+from lib.pdb import get_pdb_names_by_txt
 from lib.path import get_protein_path, get_ligand_path
 
 import os
@@ -79,11 +79,10 @@ def combine_pdb_files_by_chain(pdb_file1, pdb_file2, output_dir):
         write_pdb(combined_lines, output_file)
 
 # Usage example
-protein_names = get_all_pdb_names()
+pdb_ids = get_pdb_names_by_txt('/mnt/ito/pdbbind_raw/general_set/INDEX/general_high_resolution_pdb_ids_without_ion.txt')
 
-for pdb_name in protein_names:
-    # pdb_name = '4lkk'
-    output_dir = f'/home/ito/research/data/protein_ligand_complex/{pdb_name}/'
+for pdb_id in pdb_ids:
+    output_dir = f'/mnt/ito/pdbbind_raw/general_set/{pdb_id}/'
     # os.makedirs(output_dir, exist_ok=True)
-    combine_pdb_files_by_chain(f'/mnt/ito/pdbbind_raw/refined_set/{pdb_name}/{pdb_name}_protein.pdb', get_ligand_path(pdb_name), output_dir)
-    # break
+    combine_pdb_files_by_chain(f'/mnt/ito/pdbbind_raw/general_set/{pdb_id}/{pdb_id}_protein.pdb', f'/mnt/ito/pdbbind_raw/general_set/{pdb_id}/{pdb_id}_ligand.pdb', output_dir)
+    print(pdb_id)

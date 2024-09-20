@@ -24,7 +24,7 @@ THRESHOLDS = {atom_type: RADIUSES[atom_type] + RADIUSES['O'] - MAXIMUM_EMBEDDING
 settings = {
         "DATA_TYPE" : 'gr',
         "DATA_VOXEL_NUM" : 10,
-        "CLASSIFYING_RULE" : 'WaterClassifyingRuleSurface',
+        "CLASSIFYING_RULE" : 'WaterClassifyingRuleEmbedding',
         "LIGAND_POCKET_DEFINER" : 'LigandPocketDefinerOriginal',
         "LIGAND_VOXEL_NUM" : 8,
         "MODEL_NAME" : 'ResNet',
@@ -62,7 +62,7 @@ for pdb_name in pdb_names:
     total_failed_water_num += failed_water_num
 
 
-print(failed_protein_num, '/', len(pdb_names))
+print(len(pdb_names) - failed_protein_num, '/', len(pdb_names), (len(pdb_names) - failed_protein_num)/len(pdb_names))
 print(total_failed_water_num)
 
 with open(f'../../../data/{settings["CLASSIFYING_RULE"]}_success_protein_test.txt', 'w') as f:
