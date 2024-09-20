@@ -7,7 +7,6 @@ checkpoints/
 *.out
 *#
 *.dx
-src/lib/path.py
 src/history
 placevent
 gr-predictor
