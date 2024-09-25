@@ -29,7 +29,7 @@ from lib.helper import make_dir
 from Class.WaterClassifier.WaterClassifier import WaterClassifier
 from Class.WaterClassifier.ClassifyingRuleFactory import ClassifyingRuleFactory
 from Class.WaterClassifier.LigandPocketDefinerFactory import LigandPocketDefinerFactory
-DATA_DIR = "/home/ito/research/data/labeled_water/"
+DATA_DIR = "/mnt/ito/data/labeled_water"
 
 def classify_water(pdb_name, ligand_voxel_num, classifying_rule_name, ligand_pocket_definer_name):
     
@@ -41,7 +41,7 @@ def classify_water(pdb_name, ligand_voxel_num, classifying_rule_name, ligand_poc
             "output_displaceable": os.path.join(DATA_DIR, PATH_TYPE, "displaceable/", pdb_name,  f"pred_O_placed_{pdb_name}_3.0.pdb"),
             "output_non_displaceable": os.path.join(DATA_DIR, PATH_TYPE, "non_displaceable/", pdb_name,  f"pred_O_placed_{pdb_name}_3.0.pdb"),
         }
-    
+
     for path in paths.values():
         make_dir(path)
 
