@@ -62,7 +62,7 @@ losses = [CategoricalCrossentropy(), BinaryCrossentropy(), dice_loss]
 loss= losses[0]
 metrics = ['accuracy', dice_coefficient, Recall(), Precision()]
 class_num = 2
-path_type = f'/test/valid/smoothing/{DATA_TYPE1}/data_voxel_num_{DATA_VOXEL_NUM}/{LIGAND_POCKET_DEFINER}/ligand_pocket_voxel_num_{LIGAND_VOXEL_NUM}/{CLASSIFYING_RULE}/{MODEL_NAME}/{TRAINER_NAME}/'
+path_type = f'/valid/smoothing/{DATA_TYPE1}/data_voxel_num_{DATA_VOXEL_NUM}/{LIGAND_POCKET_DEFINER}/ligand_pocket_voxel_num_{LIGAND_VOXEL_NUM}/{CLASSIFYING_RULE}/{MODEL_NAME}/{TRAINER_NAME}/'
 # path_type = f'/{DATA_TYPE1}_{DATA_TYPE2}/data_voxel_num_{DATA_VOXEL_NUM}/{LIGAND_POCKET_DEFINER}/ligand_pocket_voxel_num_{LIGAND_VOXEL_NUM}/{CLASSIFYING_RULE}/{MODEL_NAME}/{TRAINER_NAME}/'
 
 checkpoint_path = f"./checkpoints/{path_type}/" + "cp-{epoch:04d}.weights.h5"
