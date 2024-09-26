@@ -26,7 +26,7 @@ def main():
             print(f"Error processing {pdb_name}: {e}")
         except Exception as e:
             print(f"Error processing {pdb_name}: {e}")
-            exit(1)
+            # exit(1)
         
         # try:
         #     training_gist_data_creator = TrainingDataCreatorGist(pdb_name=pdb_name, ligand_voxel_num=LIGNAD_POCKET_VOXEL_NUM, classifying_rule=CLASSIFYING_RULE, ligand_pocket_definer=LIGAND_POCKET_DEFINER, data_voxel_num=DATA_VOXEL_NUM)

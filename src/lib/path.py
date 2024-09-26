@@ -35,10 +35,10 @@ def get_non_displaceable_water_path(pdb_name, ligand_voxel_num, classifying_rule
     return f"/home/ito/research/data/labeled_water/{ligand_pocket_definer}/ligand_pocket_voxel_num_{ligand_voxel_num}/{classifying_rule}/non_displaceable/{pdb_name}/pred_O_placed_{pdb_name}_3.0.pdb"
     
 def get_training_data_path(data_type: str, water_type: str, data_voxel_num:int, classifying_rule: str, ligand_pocket_definer: str, ligand_voxel_num: int, pdb_name: str, water_id: int):
-    return f"/home/ito/research/data/training_data/{data_type}/data_voxel_num_{data_voxel_num}/{ligand_pocket_definer}/ligand_pocket_voxel_num_{ligand_voxel_num}/{classifying_rule}/{water_type}/{pdb_name}/water_id_{water_id}.npy"
+    return f"/mnt/ito/data/training_data/{data_type}/data_voxel_num_{data_voxel_num}/{ligand_pocket_definer}/ligand_pocket_voxel_num_{ligand_voxel_num}/{classifying_rule}/{water_type}/{pdb_name}/water_id_{water_id}.npy"
 
 def get_training_data_dir(data_type: str, data_voxel_num:int, classifying_rule: str, ligand_pocket_definer: str, ligand_voxel_num: int):
-    return f"/home/ito/research/data/training_data/{data_type}/data_voxel_num_{data_voxel_num}/{ligand_pocket_definer}/ligand_pocket_voxel_num_{ligand_voxel_num}/{classifying_rule}/"
+    return f"/mnt/ito/data/training_data/{data_type}/data_voxel_num_{data_voxel_num}/{ligand_pocket_definer}/ligand_pocket_voxel_num_{ligand_voxel_num}/{classifying_rule}/"
 
 def get_analysis_results_labeled_water_path(ligand_voxel_num, classifying_rule, ligand_pocket_definer):
     return f"/home/ito/research/data/analysis_results/labeled_water/{ligand_pocket_definer}/ligand_pocket_voxel_num_{ligand_voxel_num}/{classifying_rule}/labeled_water_numbers.csv"
