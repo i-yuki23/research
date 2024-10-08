@@ -23,7 +23,7 @@ import sys
 sys.path.append('..')
 
 from lib.voxel import get_voxel_info
-from lib.pdb import get_coordinates_from_pdb, get_all_pdb_names
+from lib.pdb import get_coordinates_from_pdb, get_pdb_names_by_txt
 from lib.path import get_water_path
 from lib.helper import make_dir
 from Class.WaterClassifier.WaterClassifier import WaterClassifier
@@ -44,10 +44,10 @@ def classify_water(pdb_name, ligand_voxel_num, classifying_rule_name, ligand_poc
 
     for path in paths.values():
         make_dir(path)
-
-    water_path = get_water_path(pdb_name)
+    data_type = 'general'
+    water_path = get_water_path(pdb_name, data_type)
     water_coordinates = get_coordinates_from_pdb(water_path)
-    grid_dims, grid_origin = get_voxel_info(pdb_name)
+    grid_dims, grid_origin = get_voxel_info(pdb_name, data_type)
 
     water_classifier = WaterClassifier(pdb_name, grid_dims, grid_origin)
     
@@ -69,7 +69,7 @@ def main():
     ligand_voxel_nums = [8]
     classifying_rule_names = ["WaterClassifyingRuleEmbedding"]
     ligand_pocket_definer_names = ["LigandPocketDefinerOriginal"]
-    pdb_names = get_all_pdb_names()
+    pdb_names = get_pdb_names_by_txt('/mnt/ito/pdbbind_raw/general_set/index/general_valid_proteins.txt')
 
     for ligand_voxel_num in ligand_voxel_nums:
         for classifying_rule_name in classifying_rule_names:
