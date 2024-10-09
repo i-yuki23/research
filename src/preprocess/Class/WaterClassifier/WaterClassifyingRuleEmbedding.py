@@ -11,9 +11,8 @@ class WaterClassifyingRuleEmbedding(WaterClassifyingRule):
     def __init__(self, pdb_name, grid_dims, grid_origin):
         super().__init__(pdb_name, grid_dims, grid_origin)
     
-    def classify_water(self, water_coordinates: np.ndarray, ligand_pocket: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+    def classify_water(self, ligand_path: str, water_coordinates: np.ndarray, ligand_pocket: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
 
-        ligand_path = get_ligand_path(self.pdb_name)
         ligand_atomic_symbol_coords_dict = get_atomic_symbol_coords_dict_from_pdb(ligand_path)
 
         water_coordinates_inside_ligand_pocket = self._get_water_coordinates_inside_ligand_pocket(water_coordinates, ligand_pocket)

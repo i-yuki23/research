@@ -7,10 +7,11 @@ from typing import Tuple
 class WaterClassifier:
     LIGAND_PRESENT_THRESHOLD = 1-np.exp(-1)
 
-    def __init__(self, pdb_name, grid_dims, grid_origin):
+    def __init__(self, pdb_name, grid_dims, grid_origin, ligand_path):
         self.pdb_name = pdb_name
         self.grid_dims = grid_dims
         self.grid_origin = grid_origin
+        self.ligand_path = ligand_path
         self.ligand_pocket = None
         self.water_index_to_coordinate = None
         self.water_coordinate_to_id = None
@@ -26,7 +27,7 @@ class WaterClassifier:
         self.water_coordinate_to_id = {tuple(water_coordinates[i]): i for i in range(water_coordinates.shape[0])}
 
     def _get_displaceable_and_non_displaceable_water_coords(self, water_coordinates, water_classifying_rule):
-        displaceable_water_coordinates, non_displaceable_water_coordinates = water_classifying_rule.classify_water(water_coordinates, self.ligand_pocket)
+        displaceable_water_coordinates, non_displaceable_water_coordinates = water_classifying_rule.classify_water(self.ligand_path, water_coordinates, self.ligand_pocket)
         return displaceable_water_coordinates, non_displaceable_water_coordinates
         
     def get_classified_water_ids(self, water_coordinates: np.ndarray, water_classifying_rule) -> Tuple[list, list]:
@@ -35,8 +36,7 @@ class WaterClassifier:
         non_displaceable_water_ids = self._convert_coordinates_to_water_ids(non_displaceable_water_coordinates, self.water_coordinate_to_id)
         return displaceable_water_ids, non_displaceable_water_ids
     
-    def save_classified_water_as_pdb(self, displaceable_water_ids: list, non_displaceable_water_ids: list, output_path_displaceable: str, output_path_non_displaceable: str) -> None:
-        input_pdb_path = get_water_path(self.pdb_name)
+    def save_classified_water_as_pdb(self, input_pdb_path: str, displaceable_water_ids: list, non_displaceable_water_ids: list, output_path_displaceable: str, output_path_non_displaceable: str) -> None:
         filter_atoms_and_create_new_pdb(input_pdb_path=input_pdb_path, output_pdb_path=output_path_displaceable, target_atom_ids=displaceable_water_ids)
         filter_atoms_and_create_new_pdb(input_pdb_path=input_pdb_path, output_pdb_path=output_path_non_displaceable, target_atom_ids=non_displaceable_water_ids)
     

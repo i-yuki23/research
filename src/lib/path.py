@@ -1,5 +1,10 @@
-def get_ligand_path(pdb_name):
-    return f"/mnt/dandan/3drism/dir_3DRISM_20181213_155211/{pdb_name}/{pdb_name}_ligand.pdb"
+def get_ligand_path(pdb_name, data_type):
+    if data_type == 'refined':
+        return f"/mnt/dandan/3drism/dir_3DRISM_20181213_155211/{pdb_name}/{pdb_name}_ligand.pdb"
+    elif data_type == 'general':
+        return f"/mnt/ito/pdbbind_raw/general_set/{pdb_name}/{pdb_name}_ligand.pdb"
+    else:
+        raise ValueError('data_typeにはrefinedかgeneralを指定してください')
 
 def get_water_path(pdb_name: str, data_type: str) -> str:
     base_path = "/mnt/ito"
@@ -17,8 +22,13 @@ def get_original_ligand_pocket_path(pdb_name, ligand_voxel_num):
 def get_ghecom_ligand_pocket_path(pdb_name):
     return f"/home/ito/research/data/ghecom/ligand_pocket/{pdb_name}/ligand_pocket.npy"
 
-def get_protein_path(pdb_name):
-    return f"/mnt/dandan/3drism/dir_3DRISM_20181213_155211/{pdb_name}/{pdb_name}_min.pdb"
+def get_protein_path(pdb_name, data_type):
+    if data_type == 'refined':
+        return f"/mnt/dandan/3drism/dir_3DRISM_20181213_155211/{pdb_name}/{pdb_name}_min.pdb"
+    elif data_type == 'general':
+        return f"/mnt/ito/pdbbind_raw/general_set/{pdb_name}/{pdb_name}_min.pdb"
+    else:
+        raise ValueError('data_typeにはrefinedかgeneralを指定してください')
 
 def get_gr_path(pdb_name: str, data_type: str) -> str:
     base_path = "/mnt/ito"
