@@ -13,7 +13,7 @@ def voxelizer_atom(
         half_length_index_cutoff=5,
         length_voxel=0.5,
         factor=12,
-        radiuses={'C': 1.69984, 'N': 1.62500, 'O': 1.51369, 'S': 1.78180, 'H': 1.2, 'B' : 1.92, 'F' : 1.47, 'P' : 1.80, 'I' : 1.98},
+        radiuses={'C': 1.69984, 'N': 1.62500, 'O': 1.51369, 'S': 1.78180, 'H': 1.2, 'B' : 1.92, 'F' : 1.47, 'P' : 1.80, 'I' : 1.98, 'Cl' : 1.75},
         dtype=np.float64
         ):
 

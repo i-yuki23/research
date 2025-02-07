@@ -1,3 +1,10 @@
+"""
+holo状態のリガンドの露出表面積の割合を計算する
+訓練データの絞り込みに使う→露出表面積が極端に小さいものはapo状態ではあり得ないので除外する
+"""
+
+
+
 import sys
 sys.path.append('../..')
 
@@ -36,14 +43,14 @@ class LigandSASACalculator:
 
 # リガンドの残基名（例: 'LIG'）
 ligand_resname = 'LIG'
-pdb_names = get_pdb_names_by_txt('/home/ito/research/data/monomer_general_protein.txt')
+pdb_names = get_pdb_names_by_txt('/mnt/ito/pdbbind_raw/general_set/index/monomer_general_protein.txt')
 
 ligand_sasa_list = []
 for pdb_name in pdb_names:
     # pdb_name = '4lkk'
     print(pdb_name)
     sasa_calculator = LigandSASACalculator(
-        f'/mnt/ito/pdbbind_raw/general_set/{pdb_name}/{pdb_name}_.pdb',
+        f'/mnt/ito/pdbbind_raw/general_set/{pdb_name}/{pdb_name}_complex.pdb',
         f'/mnt/ito/pdbbind_raw/general_set/{pdb_name}/{pdb_name}_ligand.pdb',
         ligand_resname
     )
@@ -52,4 +59,4 @@ for pdb_name in pdb_names:
     print(ligand_sasa)
     # break
 
-np.save('ligand_sasa.npy', np.array(ligand_sasa_list))
+np.save('ligand_sasa_general.npy', np.array(ligand_sasa_list))

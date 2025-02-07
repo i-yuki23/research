@@ -12,13 +12,13 @@ from custom_losses.dice import dice_loss, dice_coefficient
 from tensorflow.keras.metrics import Recall, Precision
 from tensorflow.keras.losses import BinaryFocalCrossentropy, BinaryCrossentropy, CategoricalCrossentropy
 import tensorflow as tf
-data_dir = '../data'
-train_list = os.path.join(data_dir, 'valid_train.txt')
-test_list = os.path.join(data_dir, 'valid_test.txt')
-val_list = os.path.join(data_dir, 'valid_val.txt')
+data_dir = '/mnt/ito/data'
+train_list = os.path.join(data_dir, 'all_valid_train.txt')
+test_list = os.path.join(data_dir, 'all_valid_test.txt')
+val_list = os.path.join(data_dir, 'all_valid_val.txt')
 
-DATA_TYPE1 = 'gr'
-# DATA_TYPE2 = 'Protein'
+DATA_TYPE1 = 'protein'
+DATA_TYPE2 = 'gr'
 DATA_VOXEL_NUM = 10
 CLASSIFYING_RULE = 'WaterClassifyingRuleEmbedding'
 LIGAND_POCKET_DEFINER = 'LigandPocketDefinerOriginal'
@@ -31,12 +31,11 @@ def apply_label_smoothing(labels, epsilon=0.1):
     return smoothed_labels
 
 training_data_dir1 = get_training_data_dir(DATA_TYPE1, DATA_VOXEL_NUM, CLASSIFYING_RULE, LIGAND_POCKET_DEFINER, LIGAND_VOXEL_NUM)
-# training_data_dir2 = get_training_data_dir(DATA_TYPE2, DATA_VOXEL_NUM, CLASSIFYING_RULE, LIGAND_POCKET_DEFINER, LIGAND_VOXEL_NUM)
+training_data_dir2 = get_training_data_dir(DATA_TYPE2, DATA_VOXEL_NUM, CLASSIFYING_RULE, LIGAND_POCKET_DEFINER, LIGAND_VOXEL_NUM)
 
-data_loader = SingleDataLoader(training_data_dir1)
+# data_loader = SingleDataLoader(training_data_dir1)
 
-# data_loader = DoubleDataLoader(training_data_dir1, training_data_dir2)
-
+data_loader = DoubleDataLoader(training_data_dir1, training_data_dir2)
 train_data, train_labels = data_loader.load_data(train_list)
 train_labels = apply_label_smoothing(train_labels, epsilon) # label smoothing
 test_data, test_labels = data_loader.load_data(test_list)
@@ -63,7 +62,7 @@ losses = [CategoricalCrossentropy(), BinaryCrossentropy(), dice_loss]
 loss= losses[0]
 metrics = ['accuracy', dice_coefficient, Recall(), Precision()]
 class_num = 2
-path_type = f'/valid/smoothing/{DATA_TYPE1}/data_voxel_num_{DATA_VOXEL_NUM}/{LIGAND_POCKET_DEFINER}/ligand_pocket_voxel_num_{LIGAND_VOXEL_NUM}/{CLASSIFYING_RULE}/{MODEL_NAME}/{TRAINER_NAME}/'
+path_type = f'/valid_all/smoothing/{DATA_TYPE1}_{DATA_TYPE2}/data_voxel_num_{DATA_VOXEL_NUM}/{LIGAND_POCKET_DEFINER}/ligand_pocket_voxel_num_{LIGAND_VOXEL_NUM}/{CLASSIFYING_RULE}/{MODEL_NAME}/{TRAINER_NAME}/'
 # path_type = f'/{DATA_TYPE1}_{DATA_TYPE2}/data_voxel_num_{DATA_VOXEL_NUM}/{LIGAND_POCKET_DEFINER}/ligand_pocket_voxel_num_{LIGAND_VOXEL_NUM}/{CLASSIFYING_RULE}/{MODEL_NAME}/{TRAINER_NAME}/'
 
 checkpoint_path = f"./checkpoints/{path_type}/" + "cp-{epoch:04d}.weights.h5"

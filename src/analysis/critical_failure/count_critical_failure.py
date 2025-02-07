@@ -48,7 +48,7 @@ def count_failed_water(pdb_name, model_settings):
         # print(f"pdb_name: {pdb_name}, failed_water_num_total: {failed_water_num_total}")
     return failed_water_num_total
 
-pdb_names = get_pdb_names_by_txt('../../../data/valid_test.txt')
+pdb_names = get_pdb_names_by_txt('../../../data/all_valid_test.txt')
 failed_protein_num = 0
 total_failed_water_num = 0
 succeed_protein = []

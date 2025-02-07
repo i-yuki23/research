@@ -236,3 +236,24 @@ def get_atoms_coords_for_each_atom_type(path_to_pdb: str) -> dict:
         atoms_coords_for_each_atom_type[element] = np.array(atoms_coords_for_each_atom_type[element])       
     
     return atoms_coords_for_each_atom_type
+
+def get_atom_coords_by_id(path_to_pdb: str, atom_id: int) -> np.ndarray:
+    """
+    Extracts coordinates of an atom with a specific id from a PDB file.
+
+    Args:
+        path_to_pdb (str): Path to a PDB file.
+        atom_id (int): Id of the atom.
+
+    Returns:
+        np.ndarray: Coordinates of the atom.
+    """
+    if not os.path.exists(path_to_pdb):
+        raise FileNotFoundError(f"{path_to_pdb} does not exist.")
+    
+    with open(path_to_pdb, 'r') as f:
+        for line in f:
+            if line.startswith("ATOM") or line.startswith("HETATM"):
+                current_atom_id = int(line[ATOMIC_ID_START:ATOMIC_ID_END+1].strip())
+                if current_atom_id == atom_id:
+                    return get_coords(line)

@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import os
-from lib.path import get_xyzv_path, get_gist_path
+from lib.path import get_xyzv_path, get_gr_path
 
 # Constants for readability
 ATOM_COORD_START = 30
@@ -41,14 +41,20 @@ def read_xyzv(pdb_name):
 
 def get_voxel_info(pdb_name=None, dx_path=None):
     if pdb_name:
-        voxel_path = get_gist_path(pdb_name)
-    else:
+        voxel_path = get_gr_path(pdb_name)
+    elif dx_path:
         voxel_path = dx_path
+    else:
+        raise ValueError("pdb_nameまたはdx_pathのどちらかを指定する必要があります")
+    
     with open(voxel_path, 'r') as f:
         file = f.readlines()
+    
     grid_dims = file[0].strip().split()[5:8]
     grid_origin = file[1].strip().split()[1:4]
-    return np.array([int(grid_dims[i])for i in range(3)]), np.array([float(grid_origin[i])for i in range(3)])
+    
+    return np.array([int(grid_dims[i]) for i in range(3)]), np.array([float(grid_origin[i]) for i in range(3)])
+
 
 def extract_surroundings_voxel(voxel_indices, grid_dims, voxel_num):
     """

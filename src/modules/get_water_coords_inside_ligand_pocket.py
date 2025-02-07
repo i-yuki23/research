@@ -14,10 +14,18 @@ def create_convert_dict(water_coordinates: np.ndarray, water_ids: np.ndarray, gr
 
 def get_voxelized_water_center(water_coordinates: np.ndarray, grid_dims: np.ndarray, grid_origin: np.ndarray) -> np.ndarray:
     water_voxel_index = coordinate_to_voxel_index(water_coordinates, grid_origin)
-
+    print(water_voxel_index)
     voxelized_water_center = np.zeros(grid_dims)
     for index in water_voxel_index:
-        voxelized_water_center[index[0], index[1], index[2]] = 1
+        if (
+            0 <= index[0] < grid_dims[0] and
+            0 <= index[1] < grid_dims[1] and
+            0 <= index[2] < grid_dims[2]
+        ):
+            voxelized_water_center[index[0], index[1], index[2]] = 1
+        else:
+            # 範囲外のインデックスを無視
+            continue
     return voxelized_water_center
     
 
@@ -26,7 +34,7 @@ def convert_voxel_to_water_coordinates(water_voxelized: np.ndarray, water_index_
     water_index = []
     for i in zip(water_index_tmp[0], water_index_tmp[1], water_index_tmp[2]):
         water_index.append([i[0], i[1], i[2]])
-
+    print(water_index_tmp)
     water_coordinates = []
     for index in water_index:
         water_coordinates.append(water_index_to_coordinate[tuple(index)])

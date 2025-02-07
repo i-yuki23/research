@@ -1,25 +1,19 @@
-# 
-
 import numpy as np
-from modules.get_labeled_water import get_displaceable_water_coords, get_non_displaceable_water_coords, get_displaceable_water_ids, get_non_displaceable_water_ids
+from lib.pdb import get_coordinates_from_pdb, get_atom_id_from_pdb
 from lib.helper import make_dir
-from lib.voxel import get_voxel_info
 from typing import Tuple
 
 class TrainingDataCreator:
 
-    def __init__(self, pdb_name, ligand_voxel_num, classifying_rule, ligand_pocket_definer, data_voxel_num):
-        self.pdb_name = pdb_name
-        self.ligand_voxel_num = ligand_voxel_num
-        self.classifying_rule = classifying_rule
-        self.ligand_pocket_definer = ligand_pocket_definer
+    def __init__(self, data_voxel_num, grid_origin, grid_dims, save_dir_dis, save_dir_non_dis, base_voxel_data_path, displaceable_water_path, non_displaceable_water_path):
         self.data_voxel_num = data_voxel_num
-        self.grid_origin = None
-        self.grid_dims = None
-        self._set_grid_info()
-
-    def _set_grid_info(self):
-        self.grid_dims, self.grid_origin = get_voxel_info(self.pdb_name)
+        self.save_dir_dis = save_dir_dis
+        self.save_dir_non_dis = save_dir_non_dis
+        self.base_voxel_data_path = base_voxel_data_path
+        self.displaceable_water_path = displaceable_water_path
+        self.non_displaceable_water_path = non_displaceable_water_path
+        self.grid_origin = grid_origin
+        self.grid_dims = grid_dims
 
     def _get_save_path_dis(self):
         raise NotImplementedError("This method must be implemented in subclass")
@@ -29,13 +23,13 @@ class TrainingDataCreator:
 
     def _get_taregt_water_coords(self):
 
-        displaceable_water_coords = get_displaceable_water_coords(self.pdb_name, self.ligand_voxel_num, self.classifying_rule, self.ligand_pocket_definer)
-        non_displaceable_water_coords = get_non_displaceable_water_coords(self.pdb_name, self.ligand_voxel_num, self.classifying_rule, self.ligand_pocket_definer)
+        displaceable_water_coords = get_coordinates_from_pdb(self.displaceable_water_path)
+        non_displaceable_water_coords = get_coordinates_from_pdb(self.non_displaceable_water_path)
         return displaceable_water_coords, non_displaceable_water_coords
     
     def _get_taregt_water_ids(self):
-        displaceable_water_ids = get_displaceable_water_ids(self.pdb_name, self.ligand_voxel_num, self.classifying_rule, self.ligand_pocket_definer)
-        non_displaceable_water_ids = get_non_displaceable_water_ids(self.pdb_name, self.ligand_voxel_num, self.classifying_rule, self.ligand_pocket_definer)
+        displaceable_water_ids = get_atom_id_from_pdb(self.displaceable_water_path, 'ATOM')
+        non_displaceable_water_ids = get_atom_id_from_pdb(self.non_displaceable_water_path, 'ATOM')
         return displaceable_water_ids, non_displaceable_water_ids
 
     def _get_base_voxel_data(self):
