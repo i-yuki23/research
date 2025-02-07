@@ -14,6 +14,11 @@ from tensorflow.keras.metrics import Recall, Precision
 from sklearn.metrics import roc_curve
 import numpy as np
 
+import tensorflow as tf
+
+# GPUを無効化
+tf.config.set_visible_devices([], 'GPU')
+
 def calculate_optimal_threshold(test_data_label, prediction_values):
     fpr, tpr, thresholds = roc_curve(test_data_label, prediction_values)
     J = tpr - fpr
@@ -22,7 +27,7 @@ def calculate_optimal_threshold(test_data_label, prediction_values):
     return optimal_threshold_youden
 
 def custom_threshold(prediction, threshold):
-    return (prediction > threshold).astype(int)
+    return (prediction[:, 1] > threshold).astype(int)
 
 # Define the parameters
 pdb_name = '4lkk'
@@ -31,8 +36,8 @@ DATA_TYPE1 = 'gr'
 DATA_TYPE = f"{DATA_TYPE1}_{DATA_TYPE2}" if 'DATA_TYPE2' in locals() else DATA_TYPE1
 is_augmented = True
 
-DATA_VOXEL_NUM = 10
-CLASSIFYING_RULE = 'WaterClassifyingRuleSurface'
+DATA_VOXEL_NUM = 20
+CLASSIFYING_RULE = 'WaterClassifyingRuleEmbedding'
 LIGAND_POCKET_DEFINER = 'LigandPocketDefinerOriginal'
 LIGAND_VOXEL_NUM = 8
 
@@ -45,9 +50,9 @@ training_data_dir1 = get_training_data_dir(DATA_TYPE1, DATA_VOXEL_NUM, CLASSIFYI
 data_loader = SingleDataLoader(training_data_dir1)
 test_data_displaceable, dis_water_ids = data_loader.get_test_data_and_water_ids(pdb_name, 'displaceable')
 test_data_non_displaceable, non_dis_water_ids = data_loader.get_test_data_and_water_ids(pdb_name, 'non_displaceable')
-data_dir = '../../data'
-test_list = os.path.join(data_dir, 'valid_test.txt')
-test_data, test_data_label = data_loader.load_data(test_list)
+# data_dir = '../../data'
+# test_list = os.path.join(data_dir, 'all_valid_test.txt')
+# test_data, test_data_label = data_loader.load_data(test_list)
 
 # For double data
 # data_loader = DoubleDataLoader(training_data_dir1, training_data_dir2)
@@ -61,17 +66,17 @@ n_base = 8
 learning_rate = 1e-4
 metrics = ['accuracy', dice_coefficient, Recall(), Precision()]
 BN = True
-optimal_threshold_youden = 0.45
+optimal_threshold_youden = 0.5
 
 # Load the model and its weights
-checkpoint_dir = f'../checkpoints/valid/{DATA_TYPE}/data_voxel_num_{DATA_VOXEL_NUM}/{LIGAND_POCKET_DEFINER}/ligand_pocket_voxel_num_{LIGAND_VOXEL_NUM}/{CLASSIFYING_RULE}/{MODEL_NAME}/aug_train/'
+checkpoint_dir = f'../checkpoints/valid_all/smoothing/{DATA_TYPE}/data_voxel_num_{DATA_VOXEL_NUM}/{LIGAND_POCKET_DEFINER}/ligand_pocket_voxel_num_{LIGAND_VOXEL_NUM}/{CLASSIFYING_RULE}/{MODEL_NAME}/aug_train/'
 latest_checkpoint = get_latest_checkpoint(checkpoint_dir)
-model = model_func(n_base, input_shape, learning_rate, BinaryCrossentropy(), metrics, BN=BN)
+model = model_func(n_base, input_shape, learning_rate, BinaryCrossentropy(), metrics, BN=BN, class_num=2)
 model.load_weights(latest_checkpoint)
 
 # Predict the labels
-prediction = model.predict(test_data)
-prediction_values = prediction.reshape(prediction.shape[0])
+# prediction = model.predict(test_data)
+# prediction_values = prediction.reshape(prediction.shape[0])
 # optimal_threshold_youden = calculate_optimal_threshold(test_data_label, prediction_values)
 print(optimal_threshold_youden)
 prediction_displaceable = model.predict(test_data_displaceable)

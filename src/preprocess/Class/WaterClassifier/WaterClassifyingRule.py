@@ -6,7 +6,7 @@ from modules.get_atomic_symbol_coords_dict import get_atomic_symbol_coords_dict_
 from lib.path import get_ligand_path
 
 class WaterClassifyingRule:
-    RADIUSES = {'C': 1.69984, 'N': 1.62500, 'O': 1.51369, 'S': 1.78180, 'H': 1.2, 'B' : 1.92, 'F' : 1.47, 'P' : 1.80, 'I' : 1.98}
+    RADIUSES = {'C': 1.69984, 'N': 1.62500, 'O': 1.51369, 'S': 1.78180, 'H': 1.2, 'B' : 1.92, 'F' : 1.47, 'P' : 1.80, 'I' : 1.98, 'Cl' : 1.75, 'Br' : 1.85}
 
     def __init__(self, pdb_name, grid_dims, grid_origin):
         self.pdb_name = pdb_name

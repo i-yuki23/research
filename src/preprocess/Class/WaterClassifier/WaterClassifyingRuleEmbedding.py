@@ -6,8 +6,7 @@ from modules.get_atomic_symbol_coords_dict import get_atomic_symbol_coords_dict_
 from lib.path import get_ligand_path
 
 class WaterClassifyingRuleEmbedding(WaterClassifyingRule):
-    EMBEDDING_DIST = {'C': -0.069829, 'N': 0.3013159, 'O': 0.3876812, 'S': -0.316393, 'H': 0.7737, 'B' : 0.08099, 'F' : -0.177, 'P' : -0.209, 'I' : 0}
-
+    EMBEDDING_DIST = {'C': -0.18937803424481814, 'N': 0.3135110597898958, 'O': 0.25102997293643625, 'S': -0.6729120085686606, 'B' : 0, 'F' : -0.0854913016297294, 'P' : -0.39769009362721164, 'I' : 0, 'Cl' : -0.3519097967906015,'Br': 0}
     def __init__(self, pdb_name, grid_dims, grid_origin):
         super().__init__(pdb_name, grid_dims, grid_origin)
     

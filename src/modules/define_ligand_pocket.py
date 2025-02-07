@@ -45,4 +45,4 @@ def get_ligand_pocket(protein_coordinates, ligand_coordinates, protein_atomic_sy
                              (protein_surroundings == 1) &
                              (~protein_presence)
                              ,1, 0)
-    return ligand_pocket
+    return ligand_pocket, protein_surroundings, ligand_surroundings

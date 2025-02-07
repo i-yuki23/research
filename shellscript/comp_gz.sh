@@ -15,4 +15,4 @@ do
 	python2 /home/ito/research/placevent/placevent.py ${PDB}_min.dx 55.5 $CUTOFF > pred_O_placed_${PDB}_${CUTOFF}.pdb
     fi
     cd ../
-done</mnt/ito/pdbbind_raw/general_set/index/general_valid_proteins.txt
+done</home/ito/research/shellscript/lis

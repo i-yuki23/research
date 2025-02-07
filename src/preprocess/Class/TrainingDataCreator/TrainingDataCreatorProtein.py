@@ -1,23 +1,22 @@
 from Class.TrainingDataCreator.TrainingDataCreator import TrainingDataCreator
 import numpy as np
+import os
 from modules.fetch_neighboring_voxel import fetch_neighboring_voxel
 from modules.get_voxelized_protein import get_voxelized_protein
-from lib.path import get_gr_path, get_training_data_path
-from lib.dx import read_dx
 
 class TrainingDataCreatorProtein(TrainingDataCreator):
     
-    def __init__(self, pdb_name, ligand_voxel_num, classifying_rule, ligand_pocket_definer, data_voxel_num):
-        super().__init__(pdb_name, ligand_voxel_num, classifying_rule, ligand_pocket_definer, data_voxel_num)
+    def __init__(self, data_voxel_num, grid_origin, grid_dims, save_dir_dis, save_dir_non_dis, base_voxel_data_path, displaceable_water_path, non_displaceable_water_path):
+        super().__init__(data_voxel_num, grid_origin, grid_dims, save_dir_dis, save_dir_non_dis, base_voxel_data_path, displaceable_water_path, non_displaceable_water_path)
 
     def _get_save_path_dis(self, water_id):
-        return get_training_data_path('Protein', 'displaceable', self.data_voxel_num, self.classifying_rule, self.ligand_pocket_definer, self.ligand_voxel_num, self.pdb_name, water_id)
+        return os.path.join(self.save_dir_dis, f'water_id_{water_id}.npy')
 
     def _get_save_path_non_dis(self, water_id):
-        return get_training_data_path('Protein', 'non_displaceable', self.data_voxel_num, self.classifying_rule, self.ligand_pocket_definer, self.ligand_voxel_num, self.pdb_name, water_id)
+        return os.path.join(self.save_dir_non_dis, f'water_id_{water_id}.npy')
 
     def _get_base_voxel_data(self):
-        return get_voxelized_protein(self.pdb_name)
+        return get_voxelized_protein(self.base_voxel_data_path, self.grid_origin, self.grid_dims)
     
     def __extract_training_voxel_data(self, water_coordinates, base_voxel):
         training_voxel_data_list = []
@@ -33,8 +32,7 @@ class TrainingDataCreatorProtein(TrainingDataCreator):
     def _get_training_data(self):
 
         displaceable_water_coords, non_displaceable_water_coords = self._get_taregt_water_coords()
-        potein_voxel = self._get_base_voxel_data()
-        training_data_displaceable = self.__extract_training_voxel_data(displaceable_water_coords, potein_voxel)
-        training_data_non_displaceable = self.__extract_training_voxel_data(non_displaceable_water_coords, potein_voxel)
+        protein_voxel = self._get_base_voxel_data()
+        training_data_displaceable = self.__extract_training_voxel_data(displaceable_water_coords, protein_voxel)
+        training_data_non_displaceable = self.__extract_training_voxel_data(non_displaceable_water_coords, protein_voxel)
         return training_data_displaceable, training_data_non_displaceable
-    

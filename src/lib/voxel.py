@@ -39,11 +39,9 @@ def read_xyzv(pdb_name):
     grid_origin = np.array([x.min(), y.min(), z.min()])
     return voxel, np.array(grid_dims), grid_origin
 
-def get_voxel_info(pdb_name=None, data_type=None, dx_path=None):
+def get_voxel_info(pdb_name=None, dx_path=None):
     if pdb_name:
-        if data_type is None:
-            raise ValueError("pdb_nameが指定されている場合はdata_typeもセットする必要があります")
-        voxel_path = get_gr_path(pdb_name, data_type)
+        voxel_path = get_gr_path(pdb_name)
     elif dx_path:
         voxel_path = dx_path
     else:

@@ -7,16 +7,20 @@ import os
 
 LIGAND_POCKET_VOXEL_NUM = 8
 included_protein_list = get_pdb_names_by_txt('/home/ito/research/data/valid_proteins.txt')
+cluster_data = pd.read_csv('/home/ito/research/cdhit/fasta_file/output_clusters.csv')
 
-exsheet = pd.ExcelFile('clusterNum.xlsx')
-exsheet_df = exsheet.parse(exsheet.sheet_names[0])
-filtered_exsheet_df = exsheet_df[exsheet_df['PDB'].isin(included_protein_list)]
-exsheet_array = filtered_exsheet_df.values
-print(exsheet_array[np.isin(exsheet_array ,'3ppm')])
-print(len(exsheet_array))
-cluster_num = filtered_exsheet_df["Cluster Num"][:]
+cluster_num = cluster_data['cluster_id']
+cluster_data_values = cluster_data.values
+# exsheet = pd.ExcelFile('clusterNum.xlsx')
+# exsheet_df = exsheet.parse(exsheet.sheet_names[0])
+# filtered_exsheet_df = exsheet_df[exsheet_df['PDB'].isin(included_protein_list)]
+# cluster_data = filtered_exsheet_df.values
+# print(exsheet_array)
+# print(len(exsheet_array))
+# cluster_num = filtered_exsheet_df["Cluster Num"][:]
+# print(cluster_num)
 cluster_protein_counts = np.bincount(cluster_num) # それぞれのクラスターに何個のたんぱく質があるか
-
+# print(cluster_protein_counts)
 # クラスターのインデックスを作成
 cluster_indices = np.arange(len(cluster_protein_counts))
 # クラスターをタンパク質数でソート
@@ -56,21 +60,21 @@ print("Group B protein count:", sum(proteins_b))
 train = []
 test = []
 
-for data in exsheet_array:
+for data in cluster_data_values:
     for a_index in clusters_a:
-        if data[3] == a_index:
-            train.append(data[1])
+        if data[1] == a_index:
+            train.append(data[0])
             # continue
             
-for data in exsheet_array:
+for data in cluster_data_values:
     for b_index in clusters_b:
-        if data[3] == b_index:
-            test.append(data[1])
+        if data[1] == b_index:
+            test.append(data[0])
 
-# # %%
-# with open("/home/ito/research/data/valid_train.txt", mode = "w") as f:
-#     for pdb in train:
-#         f.write(pdb+"\n")
+# %%
+with open("/home/ito/research/data/all_valid_train.txt", mode = "w") as f:
+    for pdb in train:
+        f.write(pdb+"\n")
 
 # ### 上と同様にtestをtestとvalに分ける
 
@@ -78,8 +82,8 @@ for data in exsheet_array:
 ## trainデータの数を数える
 counts_train = np.zeros(len(clusters_b))
 for index, num in enumerate(clusters_b):
-    for i in exsheet_array:
-        if i[3] == num:
+    for i in cluster_data_values:
+        if i[1] == num:
             counts_train[index] += 1
 
 # クラスターの要素数を表す配列
@@ -119,25 +123,25 @@ print("Group val cluster kinds:", len(clusters_val))
 print("Group val protein count:", sum(proteins_val))
 
 # %%
-# train = []
-# val = []
+train = []
+val = []
 
-# for data in exsheet_array:
-#     for train_index in clusters_train:
-#         if data[3] == train_index:
-#             train.append(data[1])
+for data in cluster_data_values:
+    for train_index in clusters_train:
+        if data[1] == train_index:
+            train.append(data[0])
             
-# for data in exsheet_array:
-#     for val_index in clusters_val:
-#         if data[3] == val_index:
-#             val.append(data[1])
+for data in cluster_data_values:
+    for val_index in clusters_val:
+        if data[1] == val_index:
+            val.append(data[0])
 
-# with open("/home/ito/research/data/valid_val.txt", mode = "w") as f:
-#     for PDB in train:
-#         f.write(PDB+"\n")
+with open("/home/ito/research/data/all_valid_val.txt", mode = "w") as f:
+    for PDB in train:
+        f.write(PDB+"\n")
         
-# with open("/home/ito/research/data/valid_test.txt", mode = "w") as f:
-#     for PDB in val:
-#         f.write(PDB+"\n")
+with open("/home/ito/research/data/all_valid_test.txt", mode = "w") as f:
+    for PDB in val:
+        f.write(PDB+"\n")
 
 

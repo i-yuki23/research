@@ -19,46 +19,58 @@ class DoubleDataLoader(DataLoader):
             try:
                 displaceable_data1 = self.get_ndarray(pdb_name, os.path.join(training_data_dir1, 'displaceable/'))
                 displaceable_data2 = self.get_ndarray(pdb_name, os.path.join(training_data_dir2, 'displaceable/'))
-                # Only when the both data are not empty, add them to the list
-                # print(displaceable_data1.shape)
+                if len(displaceable_data1) != len(displaceable_data2):
+                    print(pdb_name, len(displaceable_data1), len(displaceable_data2))
                 displaceable_data1_list.append(displaceable_data1)
                 displaceable_data2_list.append(displaceable_data2)
             except (ValueError, FileNotFoundError) as e:
                 print(f"Error processing {pdb_name}: {e}")
+                continue
             
             try:
                 non_displaceable_data1 = self.get_ndarray(pdb_name, os.path.join(training_data_dir1, 'non_displaceable/'))
                 non_displaceable_data2 = self.get_ndarray(pdb_name, os.path.join(training_data_dir2, 'non_displaceable/'))
+                if len(non_displaceable_data1) != len(non_displaceable_data2):
+                    print(pdb_name)
                 non_displaceable_data1_list.append(non_displaceable_data1)
                 non_displaceable_data2_list.append(non_displaceable_data2)
             except (ValueError, FileNotFoundError) as e:
                 print(f"Error processing {pdb_name}: {e}")
+                continue
 
         # Concatenate data along the data num axis
         displaceable_data1_array = np.concatenate(displaceable_data1_list, axis=0)
         displaceable_data2_array = np.concatenate(displaceable_data2_list, axis=0)
         non_displaceable_data1_array = np.concatenate(non_displaceable_data1_list, axis=0)
         non_displaceable_data2_array = np.concatenate(non_displaceable_data2_list, axis=0)
+
         displaceable_labels = np.ones(len(displaceable_data1_array))
-        non_displaceable_labels = np.zeros(len(non_displaceable_data1_array))  
+        non_displaceable_labels = np.zeros(len(non_displaceable_data1_array))
 
         # Concatenate data along the channel axis
-        displaceable_conbined_data = np.concatenate([displaceable_data1_array, displaceable_data2_array], axis=1)
-        non_displaceable_conbined_data = np.concatenate([non_displaceable_data1_array, non_displaceable_data2_array], axis=1)
+        displaceable_data1_array = np.transpose(displaceable_data1_array, (0, 2, 3, 4, 1))
+        non_displaceable_data1_array = np.transpose(non_displaceable_data1_array, (0, 2, 3, 4, 1))
+        displaceable_combined_data = np.concatenate([displaceable_data1_array, displaceable_data2_array], axis=4)
+        non_displaceable_combined_data = np.concatenate([non_displaceable_data1_array, non_displaceable_data2_array], axis=4)
 
-        all_data = np.concatenate([displaceable_conbined_data, non_displaceable_conbined_data], axis=0)
+        all_data = np.concatenate([displaceable_combined_data, non_displaceable_combined_data], axis=0)
         all_labels = np.concatenate([displaceable_labels, non_displaceable_labels], axis=0)
-        all_data_shuffled, all_labels_shuffled = self._shuffle_data(all_data, all_labels)
 
+        all_data_shuffled, all_labels_shuffled = self._shuffle_data(all_data, all_labels)
         return all_data_shuffled, all_labels_shuffled
 
     def load_data(self, pdb_list_path):
         with open(pdb_list_path, 'r') as f:
             pdb_list = f.read().splitlines()
             data, labels = self._get_data(pdb_list, self.training_data_dir1, self.training_data_dir2)
-            data_reshaped = tf.transpose(data, [0, 2, 3, 4, 1])
-        return data_reshaped, labels
-    
+            
+            # Transpose data to [batch_size, channels, x, y, z]
+            # data_reshaped = tf.transpose(data, [0, 1, 2, 3, 4])
+            
+            # Convert labels to one-hot encoding
+            labels_one_hot = tf.one_hot(labels.astype(int), depth=2)
+        return data, labels_one_hot
+
     def get_test_data_and_water_ids(self, pdb_name, dis_or_non):
         test_data_dir1 = os.path.join(self.training_data_dir1, dis_or_non)
         test_data_dir2 = os.path.join(self.training_data_dir2, dis_or_non)
@@ -87,5 +99,4 @@ class DoubleDataLoader(DataLoader):
             water_ids.append(water_id)
 
         data_np = np.concatenate(data_list, axis=0)
-        data_np_reshaped = tf.transpose(data_np, [0, 2, 3, 4, 1])
-        return data_np_reshaped, np.array(water_ids)
+        return data_np, np.array(water_ids)

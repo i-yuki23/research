@@ -46,13 +46,12 @@ def classify_water(pdb_name, ligand_voxel_num, classifying_rule_name, ligand_poc
         make_dir(path)
 
     # 必要なファイルのパスを取得
-    data_type = 'general'
-    water_path = get_water_path(pdb_name, data_type)
-    protein_path = get_protein_path(pdb_name, data_type)
-    ligand_path = get_ligand_path(pdb_name, data_type)
+    water_path = get_water_path(pdb_name)
+    protein_path = get_protein_path(pdb_name)
+    ligand_path = get_ligand_path(pdb_name)
     
     water_coordinates = get_coordinates_from_pdb(water_path)
-    grid_dims, grid_origin = get_voxel_info(pdb_name, data_type)
+    grid_dims, grid_origin = get_voxel_info(pdb_name)
 
     water_classifier = WaterClassifier(pdb_name, grid_dims, grid_origin, ligand_path)
     
@@ -79,12 +78,14 @@ def main():
     ligand_voxel_nums = [8]
     classifying_rule_names = ["WaterClassifyingRuleEmbedding"]
     ligand_pocket_definer_names = ["LigandPocketDefinerOriginal"]
-    pdb_names = get_pdb_names_by_txt('/mnt/ito/pdbbind_raw/general_set/index/general_valid_proteins.txt')
+    pdb_names = get_pdb_names_by_txt('../../data/all_valid_proteins')
 
     for ligand_voxel_num in ligand_voxel_nums:
         for classifying_rule_name in classifying_rule_names:
             for ligand_pocket_definer_name in ligand_pocket_definer_names:
                 for pdb_name in pdb_names:
+                    pdb_name = '1nzv'
+                    # pdb_name = '2yof'
 
                     # pdb_name = '4lkk'
                     # ligand_pocket_definer_name = 'LigandPocketDefinerOriginal'
@@ -94,6 +95,7 @@ def main():
                     print(f"ligand_voxel_num: {ligand_voxel_num}, classifying_rule: {classifying_rule_name}, ligand_pocket_definer: {ligand_pocket_definer_name}")
                     try:
                         classify_water(pdb_name, ligand_voxel_num, classifying_rule_name, ligand_pocket_definer_name)
+                        exit()
                     except ValueError as e:
                         # 特定のエラーを捕捉して処理。ここではエラーメッセージを出力するだけ
                         print(f"Error processing {pdb_name}: {e}")
